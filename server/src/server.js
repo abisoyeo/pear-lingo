@@ -4,6 +4,7 @@ import * as Sentry from "@sentry/node";
 import { initSentry } from "./shared/config/sentry.config.js";
 import httpLogger from "./shared/middlewares/httpLogger.middleware.js";
 import cookieParser from "cookie-parser";
+import cors from "cors";
 import helmet from "helmet";
 
 import authRoutes from "./features/auth/auth.route.js";
@@ -16,6 +17,12 @@ import logger from "./shared/utils/logger.js";
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
