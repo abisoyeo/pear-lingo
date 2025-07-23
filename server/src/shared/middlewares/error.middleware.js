@@ -1,12 +1,22 @@
+import * as Sentry from "@sentry/node";
 import ApiError from "../utils/apiError.util.js";
+import logger from "../utils/logger.js";
 
 const errorHandler = (error, req, res, next) => {
-  console.error("Error:", {
+  // Log via Winston
+  logger.error("Error occurred", {
     message: error.message,
     status: error.statusCode || 500,
     details: error.details,
     stack: error.stack,
     path: req.originalUrl,
+    method: req.method,
+    userAgent: req.get("User-Agent"),
+    ip: req.ip,
+    user:
+      process.env.NODE_ENV === "production" && req.user
+        ? { id: req.user.id, email: req.user.email }
+        : undefined,
   });
 
   // Mongoose Errors
@@ -35,6 +45,20 @@ const errorHandler = (error, req, res, next) => {
       name: error.name,
     });
   }
+
+  // Send to Sentry for 500 errors or unexpected errors
+  // if (error.statusCode >= 500 || !(error instanceof ApiError)) {
+  //   Sentry.captureException(error, {
+  //     contexts: {
+  //       http: {
+  //         method: req.method,
+  //         url: req.originalUrl,
+  //         status_code: error.statusCode,
+  //       },
+  //     },
+  //     user: req.user ? { id: req.user.id, email: req.user.email } : undefined,
+  //   });
+  // }
 
   res.status(error.statusCode || 500).json({
     success: false,
