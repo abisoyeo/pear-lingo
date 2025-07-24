@@ -6,11 +6,13 @@ const userSchema = new mongoose.Schema(
     fullName: {
       type: String,
       required: true,
+      trim: true,
     },
     email: {
       type: String,
       required: true,
       unique: true,
+      trim: true,
     },
     password: {
       type: String,
@@ -21,6 +23,7 @@ const userSchema = new mongoose.Schema(
     bio: {
       type: String,
       default: "",
+      trim: true,
     },
     profilePic: {
       type: String,
@@ -33,10 +36,12 @@ const userSchema = new mongoose.Schema(
     learningLanguage: {
       type: String,
       default: "",
+      trim: true,
     },
     location: {
       type: String,
       default: "",
+      trim: true,
     },
     isOnboarded: {
       type: Boolean,

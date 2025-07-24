@@ -1,11 +1,13 @@
 import Joi from "joi";
+
 export const authValidation = {
   signup: Joi.object({
-    fullName: Joi.string().required().messages({
-      "any.required": "Full Name is required",
+    fullName: Joi.string().trim().min(1).required().messages({
       "string.empty": "Full Name cannot be empty",
+      "string.min": "Full Name cannot be empty",
+      "any.required": "Full Name is required",
     }),
-    email: Joi.string().email().required().messages({
+    email: Joi.string().trim().email().required().messages({
       "string.email": "Please provide a valid email address",
       "any.required": "Email is required",
       "string.empty": "Email cannot be empty",
@@ -15,13 +17,10 @@ export const authValidation = {
       "any.required": "Password is required",
       "string.empty": "Password cannot be empty",
     }),
-    bio: Joi.string().max(500).trim().optional().messages({
-      "string.max": "Bio cannot exceed 500 characters",
-    }),
   }),
 
   login: Joi.object({
-    email: Joi.string().email().required().messages({
+    email: Joi.string().trim().email().required().messages({
       "string.email": "Please provide a valid email address",
       "any.required": "Email is required",
       "string.empty": "Email cannot be empty",
@@ -33,27 +32,19 @@ export const authValidation = {
   }),
 
   onboarding: Joi.object({
-    fullName: Joi.string().required().messages({
-      "string.empty": "Full name cannot be empty",
-      "any.required": "Full name is required",
-    }),
-
-    bio: Joi.string().required().messages({
+    bio: Joi.string().trim().required().messages({
       "string.empty": "Bio cannot be empty",
       "any.required": "Bio is required",
     }),
-
-    nativeLanguage: Joi.string().required().messages({
+    nativeLanguage: Joi.string().trim().required().messages({
       "string.empty": "Native language cannot be empty",
       "any.required": "Native language is required",
     }),
-
-    learningLanguage: Joi.string().required().messages({
+    learningLanguage: Joi.string().trim().required().messages({
       "string.empty": "Learning language cannot be empty",
       "any.required": "Learning language is required",
     }),
-
-    location: Joi.string().required().messages({
+    location: Joi.string().trim().required().messages({
       "string.empty": "Location cannot be empty",
       "any.required": "Location is required",
     }),
