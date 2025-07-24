@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { ShipWheelIcon } from "lucide-react";
 import { Link } from "react-router";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { signup } from "../lib/api";
-import toast from "react-hot-toast";
-import { handleApiError } from "../utils/toastErrorHandler";
+import { handleToastError } from "../utils/toastDisplayHandler";
+import ErrorAlert from "../components/ErrorAlert";
 
 const SignupPage = () => {
   const [signupData, setSignupData] = useState({
@@ -15,6 +15,7 @@ const SignupPage = () => {
 
   const queryClient = useQueryClient();
 
+  // Without using custom hook
   const {
     mutate: signupMutation,
     isPending,
@@ -22,21 +23,10 @@ const SignupPage = () => {
   } = useMutation({
     mutationFn: signup,
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-    onError: (error) => handleApiError(error, "Signup failed"),
+    onError: (error) => handleToastError(error, "Signup failed"),
   });
 
-  // This is how we did it at first, without using our custom hook
-  // const queryClient = useQueryClient();
-  // const {
-  //   mutate: signupMutation,
-  //   isPending,
-  //   error,
-  // } = useMutation({
-  //   mutationFn: signup,
-  //   onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-  // });
-
-  // This is how we did it using our custom hook - optimized version
+  // Optimized version
   // const { isPending, error, signupMutation } = useSignUp();
 
   const handleSignup = (e) => {
@@ -62,13 +52,7 @@ const SignupPage = () => {
           {/* ERROR MESSAGE IF ANY */}
           {error && (
             <div className="alert alert-error mb-4">
-              <ul className="list-none pl-0 list-inside text-sm">
-                {error.response.data.error?.map((err, index) => (
-                  <li key={index}>
-                    <strong>{err.issue}</strong>
-                  </li>
-                ))}
-              </ul>
+              <ErrorAlert error={error} />
             </div>
           )}
 

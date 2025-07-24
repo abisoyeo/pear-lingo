@@ -40,11 +40,8 @@ export async function signup(req, res, next) {
 
 export async function login(req, res, next) {
   try {
-    const { email, password } = req.body;
-
     const userData = {
-      email,
-      password,
+      ...req.body,
     };
 
     const user = await loginUser(userData);
@@ -74,19 +71,7 @@ export async function logout(req, res, next) {
 
 export async function onboard(req, res, next) {
   try {
-    const userId = req.user.id;
-
-    const { fullName, bio, nativeLanguage, learningLanguage, location } =
-      req.body;
-
-    const userData = {
-      userId,
-      fullName,
-      bio,
-      nativeLanguage,
-      learningLanguage,
-      location,
-    };
+    const userData = { userId: req.user.id, ...req.body };
 
     const updatedUser = await onBoardUser(userData);
 

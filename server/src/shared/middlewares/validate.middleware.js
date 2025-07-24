@@ -4,7 +4,7 @@ import { ErrorFormatter } from "../utils/errorFormatter.js";
 const validate =
   (schema, property = "body") =>
   (req, res, next) => {
-    const { error } = schema.validate(req[property], {
+    const { error, value } = schema.validate(req[property], {
       abortEarly: false,
       stripUnknown: true,
     });
@@ -13,7 +13,7 @@ const validate =
       const details = ErrorFormatter.formatJoiError(error);
       return next(new ApiError("Validation error.", 400, details));
     }
-
+    req[property] = value;
     next();
   };
 
