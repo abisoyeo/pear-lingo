@@ -1,5 +1,6 @@
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
+import { Outlet } from "react-router";
 
 const Layout = ({ children, showSidebar = false }) => {
   return (
@@ -9,7 +10,8 @@ const Layout = ({ children, showSidebar = false }) => {
 
         <div className="flex-1 flex flex-col">
           <Navbar />
-
+          {children ?? <Outlet />}
+          {/* Falls back to Outlet if children aren't provided */}
           <main className="flex-1 overflow-y-auto">{children}</main>
         </div>
       </div>

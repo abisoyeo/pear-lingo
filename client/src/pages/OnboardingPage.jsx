@@ -8,6 +8,7 @@ import {
   ShipWheelIcon,
   ShuffleIcon,
 } from "lucide-react";
+
 import {
   handleToastError,
   handleToastSuccess,
@@ -17,9 +18,13 @@ import { LANGUAGES } from "../constants";
 import ErrorAlert from "../components/ErrorAlert";
 
 const OnboardingPage = () => {
+  // Get authenticated user info and loading status
   const { isLoading, authUser } = useAuthUser();
+
+  // Initialize React Query client
   const queryClient = useQueryClient();
 
+  // Form state populated with current user info or empty defaults
   const [formState, setFormState] = useState({
     fullName: authUser?.fullName || "",
     bio: authUser?.bio || "",
@@ -29,6 +34,7 @@ const OnboardingPage = () => {
     profilePic: authUser?.profilePic || "",
   });
 
+  // Mutation to submit onboarding form
   const {
     mutate: onboardingMutation,
     isPending,
@@ -37,19 +43,21 @@ const OnboardingPage = () => {
     mutationFn: completeOnboarding,
     onSuccess: () => {
       handleToastSuccess("Profile onboarded successfully");
+      // Refresh the authUser cache with updated profile info
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
     },
     onError: (error) => handleToastError(error, "Onboarding failed"),
   });
 
+  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-
     onboardingMutation(formState);
   };
 
+  // Generates a random avatar from external service
   const handleRandomAvatar = () => {
-    const idx = Math.floor(Math.random() * 100) + 1; // 1-100 included
+    const idx = Math.floor(Math.random() * 100) + 1; // Random number from 1–100
     const randomAvatar = `https://avatar.iran.liara.run/public/${idx}.png`;
 
     setFormState({ ...formState, profilePic: randomAvatar });
@@ -58,25 +66,25 @@ const OnboardingPage = () => {
 
   return (
     <>
-      {/* ERROR MESSAGE IF ANY */}
+      {/* Display error if mutation failed */}
       {error && (
         <div className="alert alert-error mb-4">
           <ErrorAlert error={error} />
         </div>
       )}
 
+      {/* Onboarding form container */}
       <div className="min-h-screen bg-base-100 flex items-center justify-center p-4">
-        {console.log(formState)}
         <div className="card bg-base-200 w-full max-w-3xl shadow-xl">
           <div className="card-body p-6 sm:p-8">
             <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6">
               Complete Your Profile
             </h1>
 
+            {/* ==================== FORM START ==================== */}
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* PROFILE PIC CONTAINER */}
+              {/* Profile picture preview section */}
               <div className="flex flex-col items-center justify-center space-y-4">
-                {/* IMAGE PREVIEW */}
                 <div className="size-32 rounded-full bg-base-300 overflow-hidden">
                   {formState.profilePic ? (
                     <img
@@ -91,7 +99,7 @@ const OnboardingPage = () => {
                   )}
                 </div>
 
-                {/* Generate Random Avatar BTN */}
+                {/* Button to generate random avatar */}
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
@@ -104,7 +112,7 @@ const OnboardingPage = () => {
                 </div>
               </div>
 
-              {/* FULL NAME */}
+              {/* Full Name input */}
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">Full Name</span>
@@ -121,7 +129,7 @@ const OnboardingPage = () => {
                 />
               </div>
 
-              {/* BIO */}
+              {/* Bio input */}
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">Bio</span>
@@ -137,9 +145,9 @@ const OnboardingPage = () => {
                 />
               </div>
 
-              {/* LANGUAGES */}
+              {/* Language selection section */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* NATIVE LANGUAGE */}
+                {/* Native Language Dropdown */}
                 <div className="form-control">
                   <label className="label">
                     <span className="label-text">Native Language</span>
@@ -164,7 +172,7 @@ const OnboardingPage = () => {
                   </select>
                 </div>
 
-                {/* LEARNING LANGUAGE */}
+                {/* Learning Language Dropdown */}
                 <div className="form-control">
                   <label className="label">
                     <span className="label-text">Learning Language</span>
@@ -193,7 +201,7 @@ const OnboardingPage = () => {
                 </div>
               </div>
 
-              {/* LOCATION */}
+              {/* Location input with icon */}
               <div className="form-control">
                 <label className="label">
                   <span className="label-text">Location</span>
@@ -213,8 +221,7 @@ const OnboardingPage = () => {
                 </div>
               </div>
 
-              {/* SUBMIT BUTTON */}
-
+              {/* Submit button */}
               <button
                 className="btn btn-primary w-full"
                 disabled={isPending}
@@ -233,6 +240,7 @@ const OnboardingPage = () => {
                 )}
               </button>
             </form>
+            {/* ==================== FORM END ==================== */}
           </div>
         </div>
       </div>
