@@ -3,13 +3,15 @@ import FriendRequest from "./friendRequest.model.js";
 import User from "./user.model.js";
 
 export async function recommendUsers(userData) {
-  return (recommendedUsers = await User.find({
+  const excludedFriendIds = userData.currentUser?.friends || [];
+
+  return await User.find({
     $and: [
-      { _id: { $ne: userData.currentUserId } }, //exclude current user
-      { _id: { $nin: userData.currentUser.friends } }, // exclude current user's friends
+      { _id: { $ne: userData.currentUserId } },
+      { _id: { $nin: excludedFriendIds } },
       { isOnboarded: true },
     ],
-  }));
+  });
 }
 
 export async function myFriends(userId) {
@@ -102,7 +104,7 @@ export async function processFriendRequest(userId) {
 
 export async function outgoingRequests(userId) {
   const myOutgoingRequests = await FriendRequest.find({
-    sender: req.user.id,
+    sender: userId,
     status: "pending",
   }).populate(
     "recipient",
