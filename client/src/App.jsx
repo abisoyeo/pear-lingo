@@ -12,6 +12,7 @@ import useAuthUser from "./hooks/useAuthUser";
 import Layout from "./components/Layout";
 import { useThemeStore } from "./store/useThemeStore";
 import NotFoundPage from "./pages/NotFoundPage";
+import FriendPage from "./pages/FriendPage";
 
 const App = () => {
   const { isLoading, authUser } = useAuthUser();
@@ -63,6 +64,18 @@ const App = () => {
             isAuthenticated && isOnboarded ? (
               <Layout showSidebar={true}>
                 <NotificationsPage />
+              </Layout>
+            ) : (
+              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
+            )
+          }
+        />
+        <Route
+          path="/friends"
+          element={
+            isAuthenticated && isOnboarded ? (
+              <Layout showSidebar={true}>
+                <FriendPage />
               </Layout>
             ) : (
               <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
@@ -135,6 +148,7 @@ export default App;
 // import CallPage from "./pages/CallPage";
 // import ChatPage from "./pages/ChatPage";
 // import OnboardingPage from "./pages/OnboardingPage";
+// import FriendPage from "./pages/FriendPage";
 // import { Toaster } from "react-hot-toast";
 // import Layout from "./components/Layout";
 // import { useThemeStore } from "./store/useThemeStore";
@@ -160,6 +174,7 @@ export default App;
 //         >
 //           <Route index element={<HomePage />} />
 //           <Route path="notifications" element={<NotificationsPage />} />
+//           <Route path="friends" element={<FriendPage />} />
 //           <Route path="call" element={<CallPage />} />
 //           <Route path="chat" element={<ChatPage />} />
 //         </Route>
