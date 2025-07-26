@@ -52,7 +52,11 @@ export async function sendFriendRequest(req, res, next) {
 
 export async function acceptFriendRequest(req, res, next) {
   try {
-    await acceptRequest(req.params.id);
+    const requestData = {
+      requestId: req.params.id,
+      userId: req.user.id,
+    };
+    await acceptRequest(requestData);
     sendResponse(res, 200, "Friend request accepted");
   } catch (error) {
     next(error);

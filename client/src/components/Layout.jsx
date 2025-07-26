@@ -10,8 +10,8 @@ const Layout = ({ children, showSidebar = false }) => {
 
         <div className="flex-1 flex flex-col">
           <Navbar />
-          {children ?? <Outlet />}
-          {/* Falls back to Outlet if children aren't provided */}
+          {/* {children ?? <Outlet />} */}
+          {/* Falls back to Outlet if children aren't provided use for nested routes in refactored APp.jsx*/}
           <main className="flex-1 overflow-y-auto">{children}</main>
         </div>
       </div>

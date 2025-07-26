@@ -62,7 +62,8 @@ export async function sendRequest(userData) {
   return friendRequest;
 }
 
-export async function acceptRequest(requestId) {
+export async function acceptRequest(requestData) {
+  const { requestId, userId } = requestData;
   const friendRequest = await FriendRequest.findById(requestId);
 
   if (!friendRequest) {
@@ -70,7 +71,7 @@ export async function acceptRequest(requestId) {
   }
 
   // Verify the current user is the recipient
-  if (friendRequest.recipient.toString() !== req.user.id) {
+  if (friendRequest.recipient.toString() !== userId) {
     throw new ApiError("You are not authorized to accept this request", 403);
   }
 
