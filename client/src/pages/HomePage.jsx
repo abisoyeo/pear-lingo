@@ -21,37 +21,30 @@ import NoFriendsFound from "../components/NoFriendsFound";
 const HomePage = () => {
   const queryClient = useQueryClient();
 
-  // Store IDs of users to whom friend requests have already been sent
   const [outgoingRequestsIds, setOutgoingRequestsIds] = useState(new Set());
 
-  // Fetch current user's friends
   const { data: friends = [], isLoading: isLoadingFriends } = useQuery({
     queryKey: ["friends"],
     queryFn: getUserFriends,
   });
 
-  // Fetch list of recommended users (who are not friends or the user)
   const { data: recommendedUsers = [], isLoading: isLoadingUsers } = useQuery({
     queryKey: ["users"],
     queryFn: getRecommendedUsers,
   });
 
-  // Fetch list of outgoing friend requests made by current user
   const { data: outgoingFriendReqs } = useQuery({
     queryKey: ["outgoingFriendReqs"],
     queryFn: getOutgoingFriendReqs,
   });
 
-  // Send a friend request using mutation
   const { mutate: sendRequestMutation, isPending } = useMutation({
     mutationFn: sendFriendRequest,
     onSuccess: () => {
-      // Refetch outgoing requests after a new request is sent
       queryClient.invalidateQueries({ queryKey: ["outgoingFriendReqs"] });
     },
   });
 
-  // Whenever outgoingFriendReqs updates, extract recipient IDs into a Set
   useEffect(() => {
     const outgoingIds = new Set();
     if (outgoingFriendReqs && outgoingFriendReqs.length > 0) {
@@ -124,7 +117,6 @@ const HomePage = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {recommendedUsers.map((user) => {
-                // Determine if current user has already sent a request
                 const hasRequestBeenSent = outgoingRequestsIds.has(user.id);
 
                 return (
@@ -165,9 +157,13 @@ const HomePage = () => {
                       </div>
 
                       {/* Optional Bio */}
-                      {user.bio && (
-                        <p className="text-sm opacity-70">{user.bio}</p>
-                      )}
+                      <p className="text-sm opacity-70 min-h-[1.5rem]">
+                        {user.bio?.trim() ? (
+                          user.bio
+                        ) : (
+                          <span className="italic opacity-50">No bio</span>
+                        )}
+                      </p>
 
                       {/* Action: Send Friend Request */}
                       <button

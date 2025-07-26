@@ -1,10 +1,8 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { ShipWheelIcon } from "lucide-react";
 import { Link } from "react-router";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { signup } from "../lib/api";
-import { handleToastError } from "../utils/toastDisplayHandler";
 import ErrorAlert from "../components/ErrorAlert";
+import useSignUp from "../hooks/useSignup";
 
 const SignupPage = () => {
   const [signupData, setSignupData] = useState({
@@ -13,21 +11,7 @@ const SignupPage = () => {
     password: "",
   });
 
-  const queryClient = useQueryClient();
-
-  // Without using custom hook
-  const {
-    mutate: signupMutation,
-    isPending,
-    error,
-  } = useMutation({
-    mutationFn: signup,
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["authUser"] }),
-    onError: (error) => handleToastError(error, "Signup failed"),
-  });
-
-  // Optimized version
-  // const { isPending, error, signupMutation } = useSignUp();
+  const { isPending, error, signupMutation } = useSignUp();
 
   const handleSignup = (e) => {
     e.preventDefault();
@@ -46,7 +30,7 @@ const SignupPage = () => {
           <div className="mb-4 flex items-center justify-start gap-2">
             <ShipWheelIcon className="size-9 text-primary" />
             <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-wider">
-              Peer Stream
+              Pear Stream
             </span>
           </div>
           {/* ERROR MESSAGE IF ANY */}
@@ -62,7 +46,7 @@ const SignupPage = () => {
                 <div>
                   <h2 className="text-xl font-semibold">Create an Account</h2>
                   <p className="text-sm opacity-70">
-                    Join Streamify and start your language learning adventure!
+                    Join Pear Stream and start your language learning adventure!
                   </p>
                 </div>
 
