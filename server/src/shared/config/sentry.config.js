@@ -1,4 +1,3 @@
-// shared/config/sentry.config.js
 import * as Sentry from "@sentry/node";
 
 export const initSentry = (app) => {

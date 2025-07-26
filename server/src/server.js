@@ -1,4 +1,9 @@
 import "dotenv/config";
+import { fileURLToPath } from "url";
+import path, { dirname } from "path";
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 import express from "express";
 import * as Sentry from "@sentry/node";
 import { initSentry } from "./shared/config/sentry.config.js";
@@ -13,17 +18,25 @@ import chatRoutes from "./features/chat/chat.route.js";
 import { connectDB } from "./shared/config/db.config.js";
 import errorHandler from "./shared/middlewares/error.middleware.js";
 import logger from "./shared/utils/logger.js";
+import ApiError from "./shared/utils/apiError.util.js";
+import { productionHelmet } from "./shared/config/helmet.config.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.CLIENT_URL || "http://localhost:5173",
     credentials: true,
   })
 );
-app.use(helmet());
+
+// if (process.env.NODE_ENV === "production") {
+//   app.use(productionHelmet);
+// } else {
+//   app.use(helmet());
+// }
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -38,6 +51,21 @@ app.use(httpLogger);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
+
+app.use("/api/*", (req, res, next) => {
+  next(new ApiError(404, `Cannot ${req.method} ${req.originalUrl}`));
+});
+
+if (process.env.NODE_ENV === "production") {
+  const distPath = path.resolve(__dirname, "../../client/dist");
+  const indexPath = path.resolve(__dirname, "../../client/dist/index.html");
+
+  app.use(express.static(distPath));
+
+  app.use("*", (req, res) => {
+    res.sendFile(indexPath);
+  });
+}
 
 // app.use(Sentry.Handlers.errorHandler());
 app.use(errorHandler);

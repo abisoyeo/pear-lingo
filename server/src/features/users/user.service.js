@@ -24,7 +24,6 @@ export async function myFriends(userId) {
 
 export async function sendRequest(userData) {
   const { myId, recipientId } = userData;
-  // prevent sending req to yourself
   if (myId === recipientId) {
     throw new ApiError("You can't send friend request to yourself", 400);
   }
@@ -34,12 +33,10 @@ export async function sendRequest(userData) {
     throw new ApiError("Recipient not found", 404);
   }
 
-  // check if user is already friends
   if (recipient.friends.includes(myId)) {
     throw new ApiError("You are already friends with this user", 400);
   }
 
-  // check if a req already exists
   const existingRequest = await FriendRequest.findOne({
     $or: [
       { sender: myId, recipient: recipientId },
@@ -70,7 +67,6 @@ export async function acceptRequest(requestData) {
     throw new ApiError("Friend request not found", 404);
   }
 
-  // Verify the current user is the recipient
   if (friendRequest.recipient.toString() !== userId) {
     throw new ApiError("You are not authorized to accept this request", 403);
   }
@@ -78,8 +74,6 @@ export async function acceptRequest(requestData) {
   friendRequest.status = "accepted";
   await friendRequest.save();
 
-  // add each user to the other's friends array
-  // $addToSet: adds elements to an array only if they do not already exist.
   await User.findByIdAndUpdate(friendRequest.sender, {
     $addToSet: { friends: friendRequest.recipient },
   });
