@@ -20,7 +20,7 @@ export async function createUser(userData) {
     ]);
   }
 
-  const idx = Math.floor(Math.random() * 100) + 1; // generate a num between 1-100
+  const idx = Math.floor(Math.random() * 100) + 1;
   const randomAvatar = `https://avatar.iran.liara.run/public/${idx}.png`;
 
   const newUser = await User.create({
@@ -53,7 +53,6 @@ export async function loginUser(userData) {
 export async function onBoardUser(userData) {
   const { userId, nativeLanguage, learningLanguage } = userData;
 
-  // Validate learning language isn't same as native language
   if (nativeLanguage === learningLanguage) {
     const detail = ErrorFormatter.createFieldError(
       "learningLanguage",

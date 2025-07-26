@@ -47,18 +47,18 @@ const errorHandler = (error, req, res, next) => {
   }
 
   // Send to Sentry for 500 errors or unexpected errors
-  // if (error.statusCode >= 500 || !(error instanceof ApiError)) {
-  //   Sentry.captureException(error, {
-  //     contexts: {
-  //       http: {
-  //         method: req.method,
-  //         url: req.originalUrl,
-  //         status_code: error.statusCode,
-  //       },
-  //     },
-  //     user: req.user ? { id: req.user.id, email: req.user.email } : undefined,
-  //   });
-  // }
+  if (error.statusCode >= 500 || !(error instanceof ApiError)) {
+    Sentry.captureException(error, {
+      contexts: {
+        http: {
+          method: req.method,
+          url: req.originalUrl,
+          status_code: error.statusCode,
+        },
+      },
+      user: req.user ? { id: req.user.id, email: req.user.email } : undefined,
+    });
+  }
 
   res.status(error.statusCode || 500).json({
     success: false,

@@ -35,7 +35,6 @@ const logger = winston.createLogger({
   exitOnError: false,
 });
 
-// Add CloudWatch in production
 if (process.env.NODE_ENV === "production") {
   logger.add(
     new CloudWatchTransport({

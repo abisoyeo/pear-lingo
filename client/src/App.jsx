@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router";
+import { Route, Routes } from "react-router";
 import HomePage from "./pages/HomePage";
 import SignupPage from "./pages/SignupPage";
 import LoginPage from "./pages/LoginPage";
@@ -6,131 +6,76 @@ import NotificationsPage from "./pages/NotificationsPage";
 import CallPage from "./pages/CallPage";
 import ChatPage from "./pages/ChatPage";
 import OnboardingPage from "./pages/OnboardingPage";
+import FriendPage from "./pages/FriendPage";
 import { Toaster } from "react-hot-toast";
-import PageLoader from "./components/PageLoader";
-import useAuthUser from "./hooks/useAuthUser";
 import Layout from "./components/Layout";
 import { useThemeStore } from "./store/useThemeStore";
+import PrivateRoute from "./components/routes/PrivateRoute";
+import OnboardingRoute from "./components/routes/OnboardingRoute";
 import NotFoundPage from "./pages/NotFoundPage";
-import FriendPage from "./pages/FriendPage";
+import PublicOnlyRoute from "./components/routes/PublicRoute";
 
 const App = () => {
-  const { isLoading, authUser } = useAuthUser();
   const { theme } = useThemeStore();
 
-  const isAuthenticated = Boolean(authUser);
-  const isOnboarded = authUser?.isOnboarded;
-
-  if (isLoading) return <PageLoader />;
-
   return (
-    <div className="h-screen" data-theme={theme}>
+    <div className="min-h-screen" data-theme={theme}>
       <Routes>
+        {/* Layout-wrapped private routes */}
         <Route
           path="/"
           element={
-            isAuthenticated && isOnboarded ? (
-              <Layout showSidebar={true}>
-                <HomePage />
-              </Layout>
-            ) : (
-              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-            )
+            <PrivateRoute>
+              <Layout showSidebar={true} />
+            </PrivateRoute>
           }
-        />
+        >
+          <Route index element={<HomePage />} />
+          <Route path="notifications" element={<NotificationsPage />} />
+          <Route path="friends" element={<FriendPage />} />
+          <Route path="call/:id" element={<CallPage />} />
+          <Route path="chat/:id" element={<ChatPage />} />
+        </Route>
+
+        {/* Auth routes */}
         <Route
           path="/signup"
           element={
-            !isAuthenticated ? (
+            <PublicOnlyRoute>
               <SignupPage />
-            ) : (
-              <Navigate to={isOnboarded ? "/" : "/onboarding"} />
-            )
+            </PublicOnlyRoute>
           }
         />
         <Route
           path="/login"
           element={
-            !isAuthenticated ? (
+            <PublicOnlyRoute>
               <LoginPage />
-            ) : (
-              <Navigate to={isOnboarded ? "/" : "/onboarding"} />
-            )
-          }
-        />
-        <Route
-          path="/notifications"
-          element={
-            isAuthenticated && isOnboarded ? (
-              <Layout showSidebar={true}>
-                <NotificationsPage />
-              </Layout>
-            ) : (
-              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-            )
-          }
-        />
-        <Route
-          path="/friends"
-          element={
-            isAuthenticated && isOnboarded ? (
-              <Layout showSidebar={true}>
-                <FriendPage />
-              </Layout>
-            ) : (
-              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-            )
-          }
-        />
-        <Route
-          path="/call/:id"
-          element={
-            isAuthenticated && isOnboarded ? (
-              <Layout showSidebar={false}>
-                <CallPage />
-              </Layout>
-            ) : (
-              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-            )
+            </PublicOnlyRoute>
           }
         />
 
-        <Route
-          path="/chat/:id"
-          element={
-            isAuthenticated && isOnboarded ? (
-              <Layout showSidebar={false}>
-                <ChatPage />
-              </Layout>
-            ) : (
-              <Navigate to={!isAuthenticated ? "/login" : "/onboarding"} />
-            )
-          }
-        />
+        {/* Onboarding route */}
         <Route
           path="/onboarding"
           element={
-            isAuthenticated ? (
-              !isOnboarded ? (
-                <OnboardingPage />
-              ) : (
-                <Navigate to="/" />
-              )
-            ) : (
-              <Navigate to="/login" />
-            )
+            <OnboardingRoute>
+              <OnboardingPage />
+            </OnboardingRoute>
           }
         />
+
         {/* 404 fallback */}
         <Route
           path="*"
           element={
-            <Layout showSidebar={true}>
+            <Layout showSidebar={false}>
               <NotFoundPage />
             </Layout>
           }
         />
       </Routes>
+
       {/* Global toast notifications */}
       <Toaster />
     </div>
@@ -138,83 +83,3 @@ const App = () => {
 };
 
 export default App;
-
-// Refactored `App.jsx` with Reusable **Auth guards** and **Nested layout** with authenticated routes
-// import { Navigate, Route, Routes } from "react-router";
-// import HomePage from "./pages/HomePage";
-// import SignupPage from "./pages/SignupPage";
-// import LoginPage from "./pages/LoginPage";
-// import NotificationsPage from "./pages/NotificationsPage";
-// import CallPage from "./pages/CallPage";
-// import ChatPage from "./pages/ChatPage";
-// import OnboardingPage from "./pages/OnboardingPage";
-// import FriendPage from "./pages/FriendPage";
-// import { Toaster } from "react-hot-toast";
-// import Layout from "./components/Layout";
-// import { useThemeStore } from "./store/useThemeStore";
-// import PrivateRoute from "./components/routes/PrivateRoute";
-// import OnboardingRoute from "./components/routes/OnboardingRoute";
-// import NotFoundPage from "./pages/NotFoundPage";
-// import PublicOnlyRoute from "./components/routes/PublicRoute";
-
-// const App = () => {
-//   const { theme } = useThemeStore();
-
-//   return (
-//     <div className="h-screen" data-theme={theme}>
-//       <Routes>
-//         {/* Layout-wrapped private routes */}
-//         <Route
-//           path="/"
-//           element={
-//             <PrivateRoute>
-//               <Layout showSidebar={true} />
-//             </PrivateRoute>
-//           }
-//         >
-//           <Route index element={<HomePage />} />
-//           <Route path="notifications" element={<NotificationsPage />} />
-//           <Route path="friends" element={<FriendPage />} />
-//           <Route path="call" element={<CallPage />} />
-//           <Route path="chat" element={<ChatPage />} />
-//         </Route>
-
-//         {/* Auth routes */}
-//         <Route
-//           path="/signup"
-//           element={
-//             <PublicOnlyRoute>
-//               <SignupPage />
-//             </PublicOnlyRoute>
-//           }
-//         />
-//         <Route
-//           path="/login"
-//           element={
-//             <PublicOnlyRoute>
-//               <LoginPage />
-//             </PublicOnlyRoute>
-//           }
-//         />
-
-//         {/* Onboarding route */}
-//         <Route
-//           path="/onboarding"
-//           element={
-//             <OnboardingRoute>
-//               <OnboardingPage />
-//             </OnboardingRoute>
-//           }
-//         />
-
-//         {/* 404 fallback */}
-//         <Route path="*" element={<Layout showSidebar={true}><NotFoundPage /></Layout>} />
-//       </Routes>
-//       {/* Global toast notifications */}
-
-//       <Toaster />
-//     </div>
-//   );
-// };
-
-// export default App;

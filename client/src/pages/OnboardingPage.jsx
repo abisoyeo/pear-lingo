@@ -18,13 +18,10 @@ import { LANGUAGES } from "../constants";
 import ErrorAlert from "../components/ErrorAlert";
 
 const OnboardingPage = () => {
-  // Get authenticated user info and loading status
   const { isLoading, authUser } = useAuthUser();
 
-  // Initialize React Query client
   const queryClient = useQueryClient();
 
-  // Form state populated with current user info or empty defaults
   const [formState, setFormState] = useState({
     fullName: authUser?.fullName || "",
     bio: authUser?.bio || "",
@@ -34,7 +31,6 @@ const OnboardingPage = () => {
     profilePic: authUser?.profilePic || "",
   });
 
-  // Mutation to submit onboarding form
   const {
     mutate: onboardingMutation,
     isPending,
@@ -43,21 +39,18 @@ const OnboardingPage = () => {
     mutationFn: completeOnboarding,
     onSuccess: () => {
       handleToastSuccess("Profile onboarded successfully");
-      // Refresh the authUser cache with updated profile info
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
     },
     onError: (error) => handleToastError(error, "Onboarding failed"),
   });
 
-  // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
     onboardingMutation(formState);
   };
 
-  // Generates a random avatar from external service
   const handleRandomAvatar = () => {
-    const idx = Math.floor(Math.random() * 100) + 1; // Random number from 1–100
+    const idx = Math.floor(Math.random() * 100) + 1;
     const randomAvatar = `https://avatar.iran.liara.run/public/${idx}.png`;
 
     setFormState({ ...formState, profilePic: randomAvatar });

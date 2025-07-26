@@ -1,4 +1,3 @@
-// shared/middleware/httpLogger.middleware.js
 import morgan from "morgan";
 import logger from "../utils/logger.js";
 
