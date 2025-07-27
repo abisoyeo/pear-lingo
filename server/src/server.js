@@ -1,8 +1,4 @@
 import "dotenv/config";
-import { fileURLToPath } from "url";
-import path, { dirname } from "path";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 import express from "express";
 import * as Sentry from "@sentry/node";
@@ -21,7 +17,6 @@ import logger from "./shared/utils/logger.js";
 import ApiError from "./shared/utils/apiError.util.js";
 import { productionHelmet } from "./shared/config/helmet.config.js";
 
-
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -34,12 +29,7 @@ app.use(
   })
 );
 
-// if (process.env.NODE_ENV === "production") {
-//   app.use(productionHelmet);
-// } else {
-//   app.use(helmet());
-// }
-
+app.use(helmet());
 
 app.use(express.json());
 app.use(cookieParser());
