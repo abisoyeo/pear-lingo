@@ -76,7 +76,7 @@ const errorHandler = (error, req, res, next) => {
   }
 
   // ─── Client Response ──────────────────────────────────
-
+  
   res.status(status).json({
     success: false,
     message: error.message,

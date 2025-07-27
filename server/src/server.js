@@ -21,6 +21,7 @@ import logger from "./shared/utils/logger.js";
 import ApiError from "./shared/utils/apiError.util.js";
 import { productionHelmet } from "./shared/config/helmet.config.js";
 
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -38,6 +39,7 @@ app.use(
 // } else {
 //   app.use(helmet());
 // }
+
 
 app.use(express.json());
 app.use(cookieParser());
@@ -57,17 +59,6 @@ app.use("/api/chat", chatRoutes);
 app.use("/api/*", (req, res, next) => {
   next(new ApiError(404, `Cannot ${req.method} ${req.originalUrl}`));
 });
-
-if (process.env.NODE_ENV === "production") {
-  const distPath = path.resolve(__dirname, "../../client/dist");
-  const indexPath = path.resolve(__dirname, "../../client/dist/index.html");
-
-  app.use(express.static(distPath));
-
-  app.use("*", (req, res) => {
-    res.sendFile(indexPath);
-  });
-}
 
 // app.use(Sentry.Handlers.errorHandler());
 app.use(errorHandler);
