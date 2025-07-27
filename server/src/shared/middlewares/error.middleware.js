@@ -2,24 +2,13 @@ import * as Sentry from "@sentry/node";
 import ApiError from "../utils/apiError.util.js";
 import logger from "../utils/logger.js";
 
-const errorHandler = (error, req, res, next) => {
-  // Log via Winston
-  logger.error("Error occurred", {
-    message: error.message,
-    status: error.statusCode || 500,
-    details: error.details,
-    stack: error.stack,
-    path: req.originalUrl,
-    method: req.method,
-    userAgent: req.get("User-Agent"),
-    ip: req.ip,
-    user:
-      process.env.NODE_ENV === "production" && req.user
-        ? { id: req.user.id, email: req.user.email }
-        : undefined,
-  });
+const isProduction = process.env.NODE_ENV === "production";
 
-  // Mongoose Errors
+const errorHandler = (error, req, res, next) => {
+  let status = error.statusCode || 500;
+
+  // ─── Error Normalization ─────────────────────────────
+
   if (error.name === "CastError") {
     error = new ApiError("Invalid ID format", 400);
   }
@@ -38,7 +27,6 @@ const errorHandler = (error, req, res, next) => {
     error = new ApiError("Duplicate resource", 409, message);
   }
 
-  // Auto-wrap non-ApiError instances
   if (!(error instanceof ApiError)) {
     error = new ApiError("Internal server error", 500, {
       originalMessage: error.message,
@@ -46,21 +34,50 @@ const errorHandler = (error, req, res, next) => {
     });
   }
 
-  // Send to Sentry for 500 errors or unexpected errors
-  if (error.statusCode >= 500 || !(error instanceof ApiError)) {
+  status = error.statusCode;
+
+  // ─── Skip 4xx Logs in Production ─────────────────────
+
+  if (!isProduction || status >= 500) {
+    const baseLog = {
+      message: error.message,
+      status,
+      details: error.details,
+      path: req.originalUrl,
+      method: req.method,
+    };
+
+    if (isProduction) {
+      logger.error("Error occurred", {
+        ...baseLog,
+        stack: error.stack,
+        userAgent: req.get("User-Agent"),
+        ip: req.ip,
+        user: req.user ? { id: req.user.id, email: req.user.email } : undefined,
+      });
+    } else {
+      logger.error("Error occurred", baseLog);
+    }
+  }
+
+  // ─── Sentry for Production Errors ─────────────────────
+
+  if (isProduction && status >= 500) {
     Sentry.captureException(error, {
       contexts: {
         http: {
           method: req.method,
           url: req.originalUrl,
-          status_code: error.statusCode,
+          status_code: status,
         },
       },
       user: req.user ? { id: req.user.id, email: req.user.email } : undefined,
     });
   }
 
-  res.status(error.statusCode || 500).json({
+  // ─── Client Response ──────────────────────────────────
+
+  res.status(status).json({
     success: false,
     message: error.message,
     error: error.details ?? null,
