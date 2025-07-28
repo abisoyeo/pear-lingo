@@ -20,7 +20,6 @@ export const getAuthUser = async () => {
     const response = await axiosInstance.get("/auth/me");
     return response.data.data;
   } catch (error) {
-    console.log("Error in getAuthUser:", error);
     return null;
   }
 };

@@ -65,7 +65,11 @@ export async function login(req, res, next) {
 }
 
 export async function logout(req, res, next) {
-  res.clearCookie("jwt");
+  res.clearCookie("jwt", {
+    httpOnly: true,
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    secure: process.env.NODE_ENV === "production",
+  });
   sendResponse(res, 200, "Logout Successful");
 }
 
