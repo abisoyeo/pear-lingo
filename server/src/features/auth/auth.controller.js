@@ -2,9 +2,18 @@ import sendResponse from "../../shared/utils/sendResponse.util.js";
 import {
   addStreamUser,
   createUser,
+  forgotUserPassword,
   loginUser,
   onBoardUser,
+  resetUserPassword,
+  verifyUserEmail,
 } from "./auth.service.js";
+import {
+  sendPasswordResetEmail,
+  sendResetSuccessEmail,
+  sendVerificationEmail,
+  sendWelcomeEmail,
+} from "../../shared/mailtrap/emails.js";
 
 export async function signup(req, res, next) {
   try {
@@ -17,6 +26,8 @@ export async function signup(req, res, next) {
     };
 
     const newUser = await createUser(userData);
+
+    await sendVerificationEmail(newUser.email, newUser.verificationToken);
 
     await addStreamUser(newUser);
 
@@ -38,6 +49,7 @@ export async function signup(req, res, next) {
   }
 }
 
+// add check for unverified user which fails login
 export async function login(req, res, next) {
   try {
     const userData = {
@@ -47,6 +59,9 @@ export async function login(req, res, next) {
     const user = await loginUser(userData);
 
     const token = user.generateAuthToken();
+
+    user.lastLogin = new Date();
+    await user.save();
 
     res.cookie("jwt", token, {
       maxAge: 7 * 24 * 60 * 60 * 1000,
@@ -68,6 +83,53 @@ export async function logout(req, res, next) {
   res.clearCookie("jwt");
   sendResponse(res, 200, "Logout Successful");
 }
+
+export const verifyEmail = async (req, res, next) => {
+  try {
+    const { code } = req.body;
+
+    const verifiedUser = await verifyUserEmail(code);
+    await sendWelcomeEmail(verifiedUser.email, verifiedUser.fullName);
+
+    sendResponse(res, 200, "Email verified successfully", {
+      id: verifiedUser.id,
+      email: verifiedUser.email,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const { userEmail, resetToken } = await forgotUserPassword(email);
+
+    await sendPasswordResetEmail(
+      userEmail,
+      `${process.env.CLIENT_URL}/reset-password/${resetToken}`
+    );
+
+    sendResponse(res, 200, "Password reset link sent to your email");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPassword = async (req, res, next) => {
+  try {
+    const { token } = req.params;
+    const { password } = req.body;
+
+    const user = await resetUserPassword(token, password);
+
+    await sendResetSuccessEmail(user.email);
+
+    sendResponse(res, 200, "Password reset successful");
+  } catch (error) {
+    next(error);
+  }
+};
 
 export async function onboard(req, res, next) {
   try {
