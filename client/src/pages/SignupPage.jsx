@@ -1,8 +1,9 @@
 import { useState } from "react";
-import { ShipWheelIcon } from "lucide-react";
+import { AppleIcon } from "lucide-react";
 import { Link } from "react-router";
 import ErrorAlert from "../components/ErrorAlert";
 import useSignUp from "../hooks/useSignup";
+import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
 
 const SignupPage = () => {
   const [signupData, setSignupData] = useState({
@@ -11,46 +12,45 @@ const SignupPage = () => {
     password: "",
   });
 
-  const { isPending, error, signupMutation } = useSignUp();
+  const { isPending, signupMutation, fieldErrors, generalError, clearErrors } =
+    useSignUp();
 
   const handleSignup = (e) => {
     e.preventDefault();
+    clearErrors();
     signupMutation(signupData);
   };
 
   return (
     <div
-      className="h-screen flex items-center justify-center p-4 sm:p-6 md:p-8"
+      className="min-h-screen  flex items-center justify-center p-4 sm:p-6 md:p-8 lg:py-6"
       data-theme="winter"
     >
-      <div className="border border-primary/25 flex flex-col lg:flex-row w-full max-w-5xl mx-auto bg-base-100 rounded-xl shadow-lg overflow-hidden">
+      <div className="min-h-[300px] border border-primary/25 flex flex-col lg:flex-row w-full max-w-5xl mx-auto bg-base-100 rounded-xl shadow-lg overflow-hidden">
         {/* SIGNUP FORM - LEFT SIDE */}
-        <div className="w-full lg:w-1/2 p-4 sm:p-8 flex flex-col">
+        <div className="w-full lg:w-1/2 p-4 flex flex-col">
           {/* LOGO */}
-          <div className="mb-4 flex items-center justify-start gap-2">
-            <ShipWheelIcon className="size-9 text-primary" />
+          <div className="mb-2 flex items-center justify-start gap-2">
+            <AppleIcon className="size-9 text-primary" />
             <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-wider">
               Pear Stream
             </span>
           </div>
-          {/* ERROR MESSAGE IF ANY */}
-          {error && (
-            <div className="alert alert-error mb-4">
-              <ErrorAlert error={error} />
-            </div>
-          )}
+
+          {/* GENERAL ERROR MESSAGE IF ANY */}
+          <ErrorAlert message={generalError} />
 
           <div className="w-full">
             <form onSubmit={handleSignup}>
-              <div className="space-y-4">
+              <div className="space-y-2">
                 <div>
                   <h2 className="text-xl font-semibold">Create an Account</h2>
-                  <p className="text-sm opacity-70">
+                  <p className="text-sm font-semibold opacity-60">
                     Join Pear Stream and start your language learning adventure!
                   </p>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {/* FULLNAME */}
                   <div className="form-control w-full">
                     <label className="label">
@@ -69,6 +69,11 @@ const SignupPage = () => {
                       }
                       required
                     />
+                    {fieldErrors.fullName && (
+                      <span className="text-error text-xs mt-1">
+                        {fieldErrors.fullName}
+                      </span>
+                    )}
                   </div>
                   {/* EMAIL */}
                   <div className="form-control w-full">
@@ -85,6 +90,11 @@ const SignupPage = () => {
                       }
                       required
                     />
+                    {fieldErrors.email && (
+                      <span className="text-error text-xs mt-1">
+                        {fieldErrors.email}
+                      </span>
+                    )}
                   </div>
                   {/* PASSWORD */}
                   <div className="form-control w-full">
@@ -104,9 +114,12 @@ const SignupPage = () => {
                       }
                       required
                     />
-                    <p className="text-xs opacity-70 mt-1">
-                      Password must be at least 6 characters long
-                    </p>
+                    {fieldErrors.password && (
+                      <span className="text-error text-xs mt-1">
+                        {fieldErrors.password}
+                      </span>
+                    )}
+                    <PasswordStrengthMeter password={signupData.password} />
                   </div>
 
                   <div className="form-control">
@@ -130,7 +143,7 @@ const SignupPage = () => {
                   </div>
                 </div>
 
-                <button className="btn btn-primary w-full" type="submit">
+                <button className="btn btn-primary w-full">
                   {isPending ? (
                     <>
                       <span className="loading loading-spinner loading-xs"></span>
@@ -165,7 +178,7 @@ const SignupPage = () => {
               />
             </div>
 
-            <div className="text-center space-y-3 mt-6">
+            <div className="text-center space-y-2 mt-6">
               <h2 className="text-xl font-semibold">
                 Connect with language partners worldwide
               </h2>

@@ -124,7 +124,7 @@ export async function onBoardUser(userData) {
 
   if (nativeLanguage === learningLanguage) {
     const detail = ErrorFormatter.createFieldError(
-      "learningLanguage",
+      "language",
       "Learning language cannot be the same as native language",
       learningLanguage
     );

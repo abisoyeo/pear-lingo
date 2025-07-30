@@ -1,21 +1,21 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { signup } from "../lib/api";
-import { useState } from "react";
 import {
   handleToastError,
   handleToastSuccess,
 } from "../utils/toastDisplayHandler";
+import { completeOnboarding } from "../lib/api";
+import { useState } from "react";
 
-const useSignUp = () => {
+const useOnboarding = () => {
   const queryClient = useQueryClient();
   const [fieldErrors, setFieldErrors] = useState({});
   const [generalError, setGeneralError] = useState("");
 
   const { mutate, isPending } = useMutation({
-    mutationFn: signup,
+    mutationFn: completeOnboarding,
     onSuccess: () => {
+      handleToastSuccess("Profile onboarded successfully");
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
-      handleToastSuccess("Signup successful! Welcome aboard!");
     },
     onError: (error) => {
       const responseData = error.response?.data;
@@ -44,11 +44,11 @@ const useSignUp = () => {
 
   return {
     isPending,
-    signupMutation: mutate,
+    onboardingMutation: mutate,
     fieldErrors,
     generalError,
     clearErrors,
   };
 };
 
-export default useSignUp;
+export default useOnboarding;

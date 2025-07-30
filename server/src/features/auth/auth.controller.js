@@ -49,7 +49,7 @@ export async function signup(req, res, next) {
   }
 }
 
-// add check for unverified user which fails login
+// TODO: add check for unverified user which fails login
 export async function login(req, res, next) {
   try {
     const userData = {

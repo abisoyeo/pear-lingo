@@ -6,8 +6,6 @@ import ThemeSelector from "./ThemeSelector";
 
 const Navbar = ({ onOpenDrawer }) => {
   const { authUser } = useAuthUser();
-  const location = useLocation();
-  const isChatPage = location.pathname?.startsWith("/chat");
   const { logoutMutation } = useLogout();
 
   return (

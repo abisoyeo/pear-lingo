@@ -9,18 +9,13 @@ import {
   ShuffleIcon,
 } from "lucide-react";
 
-import {
-  handleToastError,
-  handleToastSuccess,
-} from "../utils/toastDisplayHandler";
-import { completeOnboarding } from "../lib/api";
+import { handleToastSuccess } from "../utils/toastDisplayHandler";
 import { LANGUAGES } from "../constants";
 import ErrorAlert from "../components/ErrorAlert";
+import useOnboarding from "../hooks/useOnboarding";
 
 const OnboardingPage = () => {
   const { isLoading, authUser } = useAuthUser();
-
-  const queryClient = useQueryClient();
 
   const [formState, setFormState] = useState({
     fullName: authUser?.fullName || "",
@@ -32,20 +27,16 @@ const OnboardingPage = () => {
   });
 
   const {
-    mutate: onboardingMutation,
+    onboardingMutation,
     isPending,
-    error,
-  } = useMutation({
-    mutationFn: completeOnboarding,
-    onSuccess: () => {
-      handleToastSuccess("Profile onboarded successfully");
-      queryClient.invalidateQueries({ queryKey: ["authUser"] });
-    },
-    onError: (error) => handleToastError(error, "Onboarding failed"),
-  });
+    fieldErrors,
+    generalError,
+    clearErrors,
+  } = useOnboarding();
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    clearErrors();
     onboardingMutation(formState);
   };
 
@@ -60,18 +51,14 @@ const OnboardingPage = () => {
   return (
     <>
       {/* Display error if mutation failed */}
-      {error && (
-        <div className="alert alert-error mb-4">
-          <ErrorAlert error={error} />
-        </div>
-      )}
+      {generalError && <ErrorAlert message={generalError} />}
 
       {/* Onboarding form container */}
       <div className="min-h-screen bg-base-100 flex items-center justify-center p-4">
         <div className="card bg-base-200 w-full max-w-3xl shadow-xl">
           <div className="card-body p-6 sm:p-8">
-            <h1 className="text-2xl sm:text-3xl font-bold text-center mb-6">
-              Complete Your Profile
+            <h1 className="text-2xl sm:text-2xl font-bold text-center mb-6">
+              Complete Your Profile To Start Your Learning Journey
             </h1>
 
             {/* ==================== FORM START ==================== */}
@@ -89,6 +76,11 @@ const OnboardingPage = () => {
                     <div className="flex items-center justify-center h-full">
                       <CameraIcon className="size-12 text-base-content opacity-40" />
                     </div>
+                  )}
+                  {fieldErrors.profilePic && (
+                    <span className="text-error text-xs mt-1">
+                      {fieldErrors.profilePic}
+                    </span>
                   )}
                 </div>
 
@@ -120,6 +112,11 @@ const OnboardingPage = () => {
                   className="input input-bordered w-full"
                   placeholder="Your full name"
                 />
+                {fieldErrors.fullName && (
+                  <span className="text-error text-xs mt-1">
+                    {fieldErrors.fullName}
+                  </span>
+                )}
               </div>
 
               {/* Bio input */}
@@ -136,6 +133,11 @@ const OnboardingPage = () => {
                   className="textarea textarea-bordered h-24"
                   placeholder="Tell others about yourself and your language learning goals"
                 />
+                {fieldErrors.bio && (
+                  <span className="text-error text-xs mt-1">
+                    {fieldErrors.bio}
+                  </span>
+                )}
               </div>
 
               {/* Language selection section */}
@@ -163,6 +165,11 @@ const OnboardingPage = () => {
                       </option>
                     ))}
                   </select>
+                  {fieldErrors.nativeLanguage && (
+                    <span className="text-error text-xs mt-1">
+                      {fieldErrors.nativeLanguage}
+                    </span>
+                  )}
                 </div>
 
                 {/* Learning Language Dropdown */}
@@ -191,7 +198,17 @@ const OnboardingPage = () => {
                       </option>
                     ))}
                   </select>
+                  {fieldErrors.learningLanguage && (
+                    <span className="text-error text-xs mt-1">
+                      {fieldErrors.learningLanguage}
+                    </span>
+                  )}
                 </div>
+                {fieldErrors.language && (
+                  <span className="text-error text-xs col-span-2 mt-1">
+                    {fieldErrors.language}
+                  </span>
+                )}
               </div>
 
               {/* Location input with icon */}
@@ -212,6 +229,11 @@ const OnboardingPage = () => {
                     placeholder="City, Country"
                   />
                 </div>
+                {fieldErrors.location && (
+                  <span className="text-error text-xs mt-1">
+                    {fieldErrors.location}
+                  </span>
+                )}
               </div>
 
               {/* Submit button */}
