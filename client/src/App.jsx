@@ -14,6 +14,10 @@ import PrivateRoute from "./components/routes/PrivateRoute";
 import OnboardingRoute from "./components/routes/OnboardingRoute";
 import NotFoundPage from "./pages/NotFoundPage";
 import PublicOnlyRoute from "./components/routes/PublicRoute";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
+import EmailVerificationPage from "./pages/EmailVerificationPage";
+import EmailVerificationRoute from "./components/routes/EmailVerificationRoute";
+import ResetPasswordPage from "./pages/ResetPasswordPage";
 
 const App = () => {
   const { theme } = useThemeStore();
@@ -21,12 +25,12 @@ const App = () => {
   return (
     <div className="min-h-screen" data-theme={theme}>
       <Routes>
-        {/* Layout-wrapped private routes */}
+        {/* Private, verified, onboarded */}
         <Route
           path="/"
           element={
             <PrivateRoute>
-              <Layout showSidebar={true} />
+              <Layout showSidebar />
             </PrivateRoute>
           }
         >
@@ -37,7 +41,7 @@ const App = () => {
           <Route path="chat/:id" element={<ChatPage />} />
         </Route>
 
-        {/* Auth routes */}
+        {/* Public only */}
         <Route
           path="/signup"
           element={
@@ -54,8 +58,34 @@ const App = () => {
             </PublicOnlyRoute>
           }
         />
+        <Route
+          path="/forgot-password"
+          element={
+            <PublicOnlyRoute>
+              <ForgotPasswordPage />
+            </PublicOnlyRoute>
+          }
+        />
+        <Route
+          path="/reset-password/:token"
+          element={
+            <PublicOnlyRoute>
+              <ResetPasswordPage />
+            </PublicOnlyRoute>
+          }
+        />
 
-        {/* Onboarding route */}
+        {/* Email verification */}
+        <Route
+          path="/verify-email"
+          element={
+            <EmailVerificationRoute>
+              <EmailVerificationPage />
+            </EmailVerificationRoute>
+          }
+        />
+
+        {/* Onboarding */}
         <Route
           path="/onboarding"
           element={
@@ -66,14 +96,7 @@ const App = () => {
         />
 
         {/* 404 fallback */}
-        <Route
-          path="*"
-          element={
-            <Layout showSidebar={false}>
-              <NotFoundPage />
-            </Layout>
-          }
-        />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
 
       {/* Global toast notifications */}

@@ -22,10 +22,7 @@ const SignupPage = () => {
   };
 
   return (
-    <div
-      className="min-h-screen  flex items-center justify-center p-4 sm:p-6 md:p-8 lg:py-6"
-      data-theme="winter"
-    >
+    <div className="min-h-screen  flex items-center justify-center p-4 sm:p-6 md:p-8 lg:py-6">
       <div className="min-h-[300px] border border-primary/25 flex flex-col lg:flex-row w-full max-w-5xl mx-auto bg-base-100 rounded-xl shadow-lg overflow-hidden">
         {/* SIGNUP FORM - LEFT SIDE */}
         <div className="w-full lg:w-1/2 p-4 flex flex-col">

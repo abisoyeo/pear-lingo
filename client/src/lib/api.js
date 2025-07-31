@@ -5,6 +5,28 @@ export const signup = async (signupData) => {
   return response.data.data;
 };
 
+export const verifyEmail = async (code) => {
+  const response = await axiosInstance.post("/auth/verify-email", code);
+  return response.data.data;
+};
+
+export const forgotPassword = async (email) => {
+  const response = await axiosInstance.post("/auth/forgot-password", email);
+  return response.data.data;
+};
+
+export const resetPassword = async ({ token, password }) => {
+  const response = await axiosInstance.post(`/auth/reset-password/${token}`, {
+    password,
+  });
+  return response.data.data;
+};
+
+export const resendVerificationEmail = async () => {
+  const response = await axiosInstance.post("/auth/verification-email/resend");
+  return response.data.data;
+};
+
 export const login = async (loginData) => {
   const response = await axiosInstance.post("/auth/login", loginData);
   return response.data.data;
@@ -20,7 +42,6 @@ export const getAuthUser = async () => {
     const response = await axiosInstance.get("/auth/me");
     return response.data.data;
   } catch (error) {
-    console.log("Error in getAuthUser:", error);
     return null;
   }
 };

@@ -1,15 +1,10 @@
-import { Navigate } from "react-router";
-import useAuthUser from "../../hooks/useAuthUser";
-import PageLoader from "../PageLoader";
+import RouteGuard from "./RouteGuard";
 
-const PublicOnlyRoute = ({ children }) => {
-  const { isLoading, authUser } = useAuthUser();
-
-  if (isLoading) return <PageLoader />;
-  if (authUser?.isOnboarded) return <Navigate to="/" />;
-  if (authUser) return <Navigate to="/onboarding" />;
-
-  return children;
-};
-
-export default PublicOnlyRoute;
+/**
+ * PublicRoute component that wraps children with RouteGuard
+ * to ensure they are only accessible when not authenticated.
+ * @param {Object} props
+ * @param {ReactNode} props.children - The child components to render
+ * @returns {JSX.Element} - The wrapped children with RouteGuard
+ */
+export default ({ children }) => <RouteGuard>{children}</RouteGuard>;
