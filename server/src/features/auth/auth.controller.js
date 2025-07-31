@@ -5,6 +5,7 @@ import {
   forgotUserPassword,
   loginUser,
   onBoardUser,
+  resendVerificationEmail,
   resetUserPassword,
   verifyUserEmail,
 } from "./auth.service.js";
@@ -49,7 +50,6 @@ export async function signup(req, res, next) {
   }
 }
 
-// TODO: add check for unverified user which fails login
 export async function login(req, res, next) {
   try {
     const userData = {
@@ -100,15 +100,31 @@ export const verifyEmail = async (req, res, next) => {
   }
 };
 
+export const resendEmail = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+
+    const user = await resendVerificationEmail(userId);
+
+    await sendVerificationEmail(user.email, user.verificationToken);
+
+    sendResponse(res, 200, "Verification email resent successfully");
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const forgotPassword = async (req, res, next) => {
   try {
     const { email } = req.body;
-    const { userEmail, resetToken } = await forgotUserPassword(email);
+    const result = await forgotUserPassword(email);
 
-    await sendPasswordResetEmail(
-      userEmail,
-      `${process.env.CLIENT_URL}/reset-password/${resetToken}`
-    );
+    if (result) {
+      await sendPasswordResetEmail(
+        result.userEmail,
+        `${process.env.CLIENT_URL}/reset-password/${result.resetToken}`
+      );
+    }
 
     sendResponse(res, 200, "Password reset link sent to your email");
   } catch (error) {

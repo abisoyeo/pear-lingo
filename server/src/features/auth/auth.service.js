@@ -21,23 +21,42 @@ export async function createUser(userData) {
     ]);
   }
 
-  const idx = Math.floor(Math.random() * 100) + 1;
-  const randomAvatar = `https://avatar.iran.liara.run/public/${idx}.png`;
+  const randomAvatar = generateRandomAvatar();
 
-  const verificationToken = Math.floor(
-    100000 + Math.random() * 900000
-  ).toString();
+  const { code, expiresAt } = generateVerificationCode();
 
   const newUser = await User.create({
     email,
     fullName,
     password,
     profilePic: randomAvatar,
-    verificationToken,
-    verificationTokenExpiresAt: Date.now() + 1 * 60 * 60 * 1000, // 1 hour
+    verificationToken: code,
+    verificationTokenExpiresAt: expiresAt,
   });
 
   return newUser;
+}
+
+export async function resendVerificationEmail(userId) {
+  const user = await User.findById(userId);
+
+  if (!user) {
+    throw new ApiError("User not found", 404);
+  }
+
+  if (user.isVerified) {
+    throw new ApiError("User is already verified", 400);
+  }
+
+  // Generate new verification token
+  const { code, expiresAt } = generateVerificationCode();
+
+  user.verificationToken = code;
+  user.verificationTokenExpiresAt = expiresAt;
+
+  await user.save();
+
+  return user;
 }
 
 export async function verifyUserEmail(code) {
@@ -79,7 +98,7 @@ export async function forgotUserPassword(email) {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new ApiError("User not found", 400);
+    return null;
   }
 
   // Generate reset token
@@ -89,7 +108,7 @@ export async function forgotUserPassword(email) {
     .update(resetToken)
     .digest("hex");
 
-  const resetTokenExpiresAt = Date.now() + 1 * 60 * 60 * 1000; // 1 hour
+  const resetTokenExpiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour expiry
 
   user.resetPasswordToken = hashedToken;
   user.resetPasswordExpiresAt = resetTokenExpiresAt;
@@ -151,4 +170,19 @@ export async function addStreamUser(userData) {
     name: userData.fullName,
     image: userData.profilePic || "",
   });
+}
+
+function generateVerificationCode() {
+  const token = Math.floor(100000 + Math.random() * 900000).toString();
+
+  const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1 hour expiry
+  return {
+    code: token,
+    expiresAt,
+  };
+}
+
+function generateRandomAvatar() {
+  const idx = Math.floor(Math.random() * 100) + 1;
+  return `https://avatar.iran.liara.run/public/${idx}.png`;
 }
