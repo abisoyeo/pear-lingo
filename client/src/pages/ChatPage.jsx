@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import useAuthUser from "../hooks/useAuthUser";
 import { useQuery } from "@tanstack/react-query";
 import { getStreamToken } from "../lib/api";
 
@@ -19,6 +18,7 @@ import toast from "react-hot-toast";
 import ChatLoader from "../components/ChatLoader";
 import CallButton from "../components/CallButton";
 import { handleToastSuccess } from "../utils/toastDisplayHandler";
+import { useAuth } from "../context/AuthContext";
 
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
@@ -27,9 +27,9 @@ const ChatPage = () => {
 
   const [chatClient, setChatClient] = useState(null);
   const [channel, setChannel] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(true);
 
-  const { authUser } = useAuthUser();
+  const { authUser } = useAuth();
 
   const { data: tokenData } = useQuery({
     queryKey: ["streamToken"],
@@ -88,7 +88,7 @@ const ChatPage = () => {
     }
   };
 
-  if (loading || !chatClient || !channel) return <ChatLoader />;
+  if (isLoading || !chatClient || !channel) return <ChatLoader />;
 
   return (
     <div className="h-[93vh]">

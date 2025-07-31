@@ -7,4 +7,4 @@ import RouteGuard from "./RouteGuard";
  * @param {ReactNode} props.children - The child components to render
  * @returns {JSX.Element} - The wrapped children with RouteGuard
  */
-export default ({ children }) => <RouteGuard>{children}</RouteGuard>;
+export default ({ children }) => <RouteGuard publicOnly>{children}</RouteGuard>;

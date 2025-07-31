@@ -6,6 +6,7 @@ import {
   handleToastSuccess,
 } from "../utils/toastDisplayHandler";
 import { useNavigate } from "react-router";
+import toast from "react-hot-toast";
 
 const useResetPassword = () => {
   const queryClient = useQueryClient();
@@ -18,12 +19,10 @@ const useResetPassword = () => {
   const { mutate, isPending, error, isSuccess } = useMutation({
     mutationFn: resetPassword,
     onSuccess: () => {
-      handleToastSuccess(
-        "Password reset successfully, redirecting to login page..."
-      );
-      setTimeout(() => {
-        navigate("/login");
-      }, 2000);
+      toast.success("Password reset successfully, redirecting...", {
+        duration: 2000,
+      });
+      navigate("/login");
     },
     onError: (error) => {
       const responseData = error.response?.data;

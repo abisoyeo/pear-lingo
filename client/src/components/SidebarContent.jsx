@@ -1,23 +1,14 @@
 import { Link, useLocation } from "react-router";
-import useAuthUser from "../hooks/useAuthUser";
-import { AppleIcon, BellIcon, HomeIcon, UsersIcon } from "lucide-react";
+import { BellIcon, HomeIcon, UsersIcon } from "lucide-react";
+import { useAuth } from "../context/AuthContext";
 
 const SidebarContent = () => {
-  const { authUser } = useAuthUser();
+  const { authUser } = useAuth();
   const location = useLocation();
   const currentPath = location.pathname;
 
   return (
     <div className="flex flex-col h-full bg-base-200 border-base-300">
-      {/* <div className="p-4 border-b border-base-300">
-        <Link to="/" className="flex items-center gap-2.5">
-          <AppleIcon className="size-7 text-primary" />
-          <span className="text-2xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary  tracking-wider">
-            Pear Stream
-          </span>
-        </Link>
-      </div> */}
-
       <nav className="flex-1 p-4 space-y-2 mt-[35px]">
         <Link
           to="/"

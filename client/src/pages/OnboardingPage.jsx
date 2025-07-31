@@ -1,5 +1,3 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import useAuthUser from "../hooks/useAuthUser";
 import { useState } from "react";
 import {
   CameraIcon,
@@ -13,9 +11,10 @@ import { handleToastSuccess } from "../utils/toastDisplayHandler";
 import { LANGUAGES } from "../constants";
 import ErrorAlert from "../components/ErrorAlert";
 import useOnboarding from "../hooks/useOnboarding";
+import { useAuth } from "../context/AuthContext";
 
 const OnboardingPage = () => {
-  const { isLoading, authUser } = useAuthUser();
+  const { authUser } = useAuth();
 
   const [formState, setFormState] = useState({
     fullName: authUser?.fullName || "",
@@ -204,15 +203,15 @@ const OnboardingPage = () => {
                     </span>
                   )}
                 </div>
-                {fieldErrors.language && (
-                  <span className="text-error text-xs col-span-2 mt-1">
-                    {fieldErrors.language}
-                  </span>
-                )}
               </div>
+              {fieldErrors.language && (
+                <span className="text-error text-xs">
+                  {fieldErrors.language}
+                </span>
+              )}
 
               {/* Location input with icon */}
-              <div className="form-control">
+              <div className="form-control mt-1">
                 <label className="label">
                   <span className="label-text">Location</span>
                 </label>

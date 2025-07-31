@@ -14,8 +14,8 @@ const useOnboarding = () => {
   const { mutate, isPending } = useMutation({
     mutationFn: completeOnboarding,
     onSuccess: () => {
-      handleToastSuccess("Profile onboarded successfully");
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
+      handleToastSuccess("Profile onboarded successfully");
     },
     onError: (error) => {
       const responseData = error.response?.data;

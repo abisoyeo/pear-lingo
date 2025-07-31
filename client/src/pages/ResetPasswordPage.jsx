@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate, useParams } from "react-router";
+import { useParams } from "react-router";
 import { AppleIcon, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 import useResetPassword from "../hooks/useResetPassword";

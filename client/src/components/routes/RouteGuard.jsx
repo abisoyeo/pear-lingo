@@ -1,44 +1,55 @@
 import { Navigate } from "react-router";
-import useAuthUser from "../../hooks/useAuthUser";
-import PageLoader from "../PageLoader";
+import { useAuth } from "../../context/AuthContext";
 
 /**
+ * RouteGuard handles auth, verification, and onboarding checks.
+ *
  * @param {Object} props
- * @param {boolean} props.requireAuth - Redirect to login if not authenticated
- * @param {boolean} props.requireVerified - Redirect to verify-email if not verified
- * @param {boolean} props.requireOnboarded - Redirect to onboarding if not onboarded
+ * @param {boolean} requireAuth - Must be logged in
+ * @param {boolean} requireVerified - true = must be verified, false = must be unverified, undefined = no check
+ * @param {boolean} requireOnboarded - true = must be onboarded, false = must NOT be onboarded, undefined = no check
+ * @param {boolean} publicOnly - Page only for unauthenticated users
  * @param {ReactNode} props.children
  */
 const RouteGuard = ({
   requireAuth = false,
-  requireVerified = false,
-  requireOnboarded = false,
+  requireVerified,
+  requireOnboarded,
+  publicOnly = false,
   children,
 }) => {
-  const { isLoading, authUser } = useAuthUser();
+  const { authUser } = useAuth();
 
-  if (isLoading) return <PageLoader />;
-
-  // Require login
-  if (requireAuth && !authUser) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Require not logged in (public only)
-  if (!requireAuth && authUser) {
+  // Public-only: redirect logged-in users
+  if (publicOnly && authUser) {
     if (!authUser.isVerified) return <Navigate to="/verify-email" replace />;
     if (!authUser.isOnboarded) return <Navigate to="/onboarding" replace />;
     return <Navigate to="/" replace />;
   }
 
-  // Require verified email
-  if (requireVerified && authUser && !authUser.isVerified) {
-    return <Navigate to="/verify-email" replace />;
+  // Require authentication
+  if (requireAuth && !authUser) {
+    return <Navigate to="/login" replace />;
   }
 
-  // Require onboarding
-  if (requireOnboarded && authUser && !authUser.isOnboarded) {
-    return <Navigate to="/onboarding" replace />;
+  if (authUser) {
+    // Priority: unverified check
+    if (requireVerified !== false && !authUser.isVerified) {
+      return <Navigate to="/verify-email" replace />;
+    }
+
+    // Onboarding checks
+    if (requireOnboarded === true && !authUser.isOnboarded) {
+      return <Navigate to="/onboarding" replace />;
+    }
+    if (requireOnboarded === false && authUser.isOnboarded) {
+      return <Navigate to="/" replace />;
+    }
+
+    // If must be unverified but user is verified
+    if (requireVerified === false && authUser.isVerified) {
+      return <Navigate to="/" replace />;
+    }
   }
 
   return children;

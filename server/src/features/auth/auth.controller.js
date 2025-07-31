@@ -2,6 +2,7 @@ import sendResponse from "../../shared/utils/sendResponse.util.js";
 import {
   addStreamUser,
   createUser,
+  fetchProfile,
   forgotUserPassword,
   loginUser,
   onBoardUser,
@@ -162,5 +163,13 @@ export async function onboard(req, res, next) {
 }
 
 export async function profile(req, res, next) {
-  sendResponse(res, 200, "Profile fetch successful", req.user);
+  try {
+    const userId = req.user.id;
+
+    const user = await fetchProfile(userId);
+
+    sendResponse(res, 200, "Profile fetch successful", user);
+  } catch (error) {
+    next(error);
+  }
 }

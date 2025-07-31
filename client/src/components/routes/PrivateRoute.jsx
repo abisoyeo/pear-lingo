@@ -8,7 +8,7 @@ import RouteGuard from "./RouteGuard";
  * @param {ReactNode} props.children - The child components to render
  */
 export default ({ children }) => (
-  <RouteGuard requireAuth requireVerified requireOnboarded>
+  <RouteGuard requireAuth requireVerified requireOnboarded={true}>
     {children}
   </RouteGuard>
 );

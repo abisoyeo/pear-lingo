@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router";
-import useAuthUser from "../hooks/useAuthUser";
 import { useQuery } from "@tanstack/react-query";
 import { getStreamToken } from "../lib/api";
 
@@ -18,6 +17,7 @@ import {
 import "@stream-io/video-react-sdk/dist/css/styles.css";
 import PageLoader from "../components/PageLoader";
 import { handleToastError } from "../utils/toastDisplayHandler";
+import { useAuth } from "../context/AuthContext";
 
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 
@@ -27,7 +27,7 @@ const CallPage = () => {
   const [call, setCall] = useState(null);
   const [isConnecting, setIsConnecting] = useState(true);
 
-  const { authUser, isLoading } = useAuthUser();
+  const { authUser } = useAuth();
 
   const { data: tokenData } = useQuery({
     queryKey: ["streamToken"],
@@ -73,7 +73,7 @@ const CallPage = () => {
     initCall();
   }, [tokenData, authUser, callId]);
 
-  if (isLoading || isConnecting) return <PageLoader />;
+  if (isConnecting) return <PageLoader />;
 
   return (
     <div className="h-screen flex flex-col items-center justify-center">
