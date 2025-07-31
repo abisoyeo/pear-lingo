@@ -107,7 +107,7 @@ export const resendEmail = async (req, res, next) => {
 
     const user = await resendVerificationEmail(userId);
 
-    await sendVerificationEmail(user.email, user.verificationToken);
+    // await sendVerificationEmail(user.email, user.verificationToken);
 
     sendResponse(res, 200, "Verification email resent successfully");
   } catch (error) {

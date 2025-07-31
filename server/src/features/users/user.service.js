@@ -2,13 +2,15 @@ import ApiError from "../../shared/utils/apiError.util.js";
 import FriendRequest from "./friendRequest.model.js";
 import User from "./user.model.js";
 
-export async function recommendUsers(userData) {
-  const excludedFriendIds = userData.currentUser?.friends || [];
+export async function recommendUsers(userId) {
+  const currentUser = await User.findById(userId).select("friends");
+  const excludedFriendIds = currentUser?.friends || [];
 
   return await User.find({
     $and: [
-      { _id: { $ne: userData.currentUserId } },
+      { _id: { $ne: userId } },
       { _id: { $nin: excludedFriendIds } },
+      { isVerified: true },
       { isOnboarded: true },
     ],
   });

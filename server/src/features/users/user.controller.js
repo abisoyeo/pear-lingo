@@ -10,9 +10,9 @@ import sendResponse from "../../shared/utils/sendResponse.util.js";
 
 export async function getRecommendedUsers(req, res, next) {
   try {
-    const userData = { currentUserId: req.user.id, currentUser: req.user };
+    const userId = req.user.id;
 
-    const recommendedUsers = await recommendUsers(userData);
+    const recommendedUsers = await recommendUsers(userId);
 
     sendResponse(
       res,
