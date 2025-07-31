@@ -100,7 +100,7 @@ export async function processFriendRequest(userId) {
 }
 
 export async function outgoingRequests(userId) {
-  const myOutgoingRequests = await FriendRequest.find({
+  const requests = await FriendRequest.find({
     sender: userId,
     status: "pending",
   }).populate(
@@ -108,5 +108,5 @@ export async function outgoingRequests(userId) {
     "fullName profilePic nativeLanguage learningLanguage"
   );
 
-  return myOutgoingRequests;
+  return requests.filter((req) => req.recipient !== null);
 }
