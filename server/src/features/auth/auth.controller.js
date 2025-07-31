@@ -29,7 +29,7 @@ export async function signup(req, res, next) {
 
     const newUser = await createUser(userData);
 
-    await sendVerificationEmail(newUser.email, newUser.verificationToken);
+    // await sendVerificationEmail(newUser.email, newUser.verificationToken);
 
     await addStreamUser(newUser);
 
@@ -90,7 +90,7 @@ export const verifyEmail = async (req, res, next) => {
     const { code } = req.body;
 
     const verifiedUser = await verifyUserEmail(code);
-    await sendWelcomeEmail(verifiedUser.email, verifiedUser.fullName);
+    // await sendWelcomeEmail(verifiedUser.email, verifiedUser.fullName);
 
     sendResponse(res, 200, "Email verified successfully", {
       id: verifiedUser.id,
@@ -120,12 +120,12 @@ export const forgotPassword = async (req, res, next) => {
     const { email } = req.body;
     const result = await forgotUserPassword(email);
 
-    if (result) {
-      await sendPasswordResetEmail(
-        result.userEmail,
-        `${process.env.CLIENT_URL}/reset-password/${result.resetToken}`
-      );
-    }
+    // if (result) {
+    //   await sendPasswordResetEmail(
+    //     result.userEmail,
+    //     `${process.env.CLIENT_URL}/reset-password/${result.resetToken}`
+    //   );
+    // }
 
     sendResponse(res, 200, "Password reset link sent to your email");
   } catch (error) {
@@ -140,7 +140,7 @@ export const resetPassword = async (req, res, next) => {
 
     const user = await resetUserPassword(token, password);
 
-    await sendResetSuccessEmail(user.email);
+    // await sendResetSuccessEmail(user.email);
 
     sendResponse(res, 200, "Password reset successful");
   } catch (error) {
