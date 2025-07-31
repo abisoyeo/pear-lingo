@@ -23,7 +23,7 @@ const Navbar = ({ onOpenDrawer }) => {
         <Link to="/" className="flex items-center gap-1.5 sm:gap-2.5">
           <AppleIcon className="size-6 sm:size-7 text-primary" />
           <span className="text-lg sm:text-xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-wider">
-            PearStream
+            Pear Lingo
           </span>
         </Link>
 

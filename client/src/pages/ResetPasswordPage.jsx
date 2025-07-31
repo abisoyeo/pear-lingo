@@ -37,7 +37,7 @@ const ResetPasswordPage = () => {
           <div className="mb-2 flex items-center justify-center gap-2">
             <AppleIcon className="size-9 text-primary" />
             <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary  tracking-wider">
-              Pear Stream
+              Pear Lingo
             </span>
           </div>
         </div>

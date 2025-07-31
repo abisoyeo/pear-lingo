@@ -30,7 +30,7 @@ const SignupPage = () => {
           <div className="mb-2 flex items-center justify-start gap-2">
             <AppleIcon className="size-9 text-primary" />
             <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-wider">
-              Pear Stream
+              Pear Lingo
             </span>
           </div>
 
@@ -43,7 +43,7 @@ const SignupPage = () => {
                 <div>
                   <h2 className="text-xl font-semibold">Create an Account</h2>
                   <p className="text-sm font-semibold opacity-60">
-                    Join Pear Stream and start your language learning adventure!
+                    Join Pear Lingo and start your language learning adventure!
                   </p>
                 </div>
 
