@@ -11,15 +11,27 @@ const useLogin = () => {
 
   const [fieldErrors, setFieldErrors] = useState({});
   const [generalError, setGeneralError] = useState("");
+  const [retryAfter, setRetryAfter] = useState(null);
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: login,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
       handleToastSuccess("Login successful! Welcome back!");
+      setRetryAfter(null);
     },
     onError: (error) => {
       const responseData = error.response?.data;
+
+      if (error.response?.status === 429 && responseData?.retryAfter) {
+        setRetryAfter(responseData.retryAfter);
+        setGeneralError(
+          responseData?.message ||
+            "Too many login attempts. Please wait before trying again."
+        );
+        handleToastError(error);
+        return;
+      }
 
       if (Array.isArray(responseData?.error)) {
         // Validation (field) errors
@@ -50,6 +62,8 @@ const useLogin = () => {
     fieldErrors,
     generalError,
     clearErrors,
+    retryAfter,
+    setRetryAfter,
   };
 };
 

@@ -13,6 +13,10 @@ export default function createRateLimiter({ max, windowMs, message }) {
   return rateLimit({
     windowMs,
     max,
+    keyGenerator: (req) => {
+      // Use email from body if available, fallback to IP
+      return req.body?.email || req.ip;
+    },
     handler: (req, res, next) => {
       logger.warn("Rate limit hit", {
         ip: req.ip,
@@ -20,7 +24,9 @@ export default function createRateLimiter({ max, windowMs, message }) {
         method: req.method,
         userAgent: req.get("User-Agent"),
       });
-      next(new ApiError(message, 429));
+      const retryAfterSeconds = Math.ceil(windowMs / 1000);
+
+      next(new ApiError(message, 429, { retryAfter: retryAfterSeconds }));
     },
     standardHeaders: true,
     legacyHeaders: false,

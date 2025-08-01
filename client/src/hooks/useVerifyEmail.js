@@ -13,16 +13,29 @@ const useVerifyEmail = () => {
 
   const [fieldErrors, setFieldErrors] = useState({});
   const [generalError, setGeneralError] = useState("");
+  const [retryAfter, setRetryAfter] = useState(null);
 
   const { mutate, isPending, error } = useMutation({
     mutationFn: verifyEmail,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["authUser"] });
       handleToastSuccess("Email verified successfully! Welcome aboard!");
+      setRetryAfter(null);
       navigate("/");
     },
     onError: (error) => {
       const responseData = error.response?.data;
+
+      // rate limiting error handling
+      if (error.response?.status === 429 && responseData?.retryAfter) {
+        setRetryAfter(responseData.retryAfter);
+        setGeneralError(
+          responseData?.message ||
+            "Too many attempts. Please wait before trying again."
+        );
+        handleToastError(error);
+        return;
+      }
 
       if (Array.isArray(responseData?.error)) {
         // Validation (field) errors
@@ -53,6 +66,8 @@ const useVerifyEmail = () => {
     fieldErrors,
     generalError,
     clearErrors,
+    retryAfter,
+    setRetryAfter,
   };
 };
 

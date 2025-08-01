@@ -3,6 +3,7 @@ import { AppleIcon } from "lucide-react";
 import { Link } from "react-router";
 import ErrorAlert from "../components/ErrorAlert";
 import useSignUp from "../hooks/useSignup";
+import { useCooldown } from "../hooks/useCooldown";
 import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
 
 const SignupPage = () => {
@@ -12,12 +13,25 @@ const SignupPage = () => {
     password: "",
   });
 
-  const { isPending, signupMutation, fieldErrors, generalError, clearErrors } =
-    useSignUp();
+  const {
+    isPending,
+    signupMutation,
+    fieldErrors,
+    generalError,
+    clearErrors,
+    retryAfter,
+    setRetryAfter,
+  } = useSignUp();
+
+  const { cooldown, isActive, formatTime } = useCooldown(retryAfter);
 
   const handleSignup = (e) => {
     e.preventDefault();
+
+    if (isActive) return;
+
     clearErrors();
+    setRetryAfter(null);
     signupMutation(signupData);
   };
 
@@ -140,12 +154,17 @@ const SignupPage = () => {
                   </div>
                 </div>
 
-                <button className="btn btn-primary w-full">
+                <button
+                  className="btn btn-primary w-full"
+                  disabled={isPending || isActive}
+                >
                   {isPending ? (
                     <>
                       <span className="loading loading-spinner loading-xs"></span>
                       Loading...
                     </>
+                  ) : isActive ? (
+                    `Wait ${formatTime} to retry`
                   ) : (
                     "Create Account"
                   )}{" "}

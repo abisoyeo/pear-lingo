@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AppleIcon } from "lucide-react";
 import { Link } from "react-router";
 import useLogin from "../hooks/useLogin";
+import { useCooldown } from "../hooks/useCooldown";
 import ErrorAlert from "../components/ErrorAlert";
 
 const LoginPage = () => {
@@ -17,11 +18,19 @@ const LoginPage = () => {
     fieldErrors,
     generalError,
     clearErrors,
+    retryAfter,
+    setRetryAfter,
   } = useLogin();
+
+  const { cooldown, isActive, formatTime } = useCooldown(retryAfter);
 
   const handleLogin = (e) => {
     e.preventDefault();
+
+    if (isActive) return;
+
     clearErrors();
+    setRetryAfter(null);
     loginMutation(loginData);
   };
 
@@ -108,13 +117,15 @@ const LoginPage = () => {
                     <button
                       type="submit"
                       className="btn btn-primary w-full"
-                      disabled={isPending}
+                      disabled={isPending || isActive}
                     >
                       {isPending ? (
                         <>
                           <span className="loading loading-spinner loading-xs"></span>
                           Signing in...
                         </>
+                      ) : isActive ? (
+                        `Wait ${formatTime} to retry`
                       ) : (
                         "Sign In"
                       )}

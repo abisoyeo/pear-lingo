@@ -3,6 +3,8 @@ import { useParams } from "react-router";
 import { AppleIcon, Lock } from "lucide-react";
 import toast from "react-hot-toast";
 import useResetPassword from "../hooks/useResetPassword";
+import { useCooldown } from "../hooks/useCooldown";
+import ErrorAlert from "../components/ErrorAlert";
 
 const ResetPasswordPage = () => {
   const [password, setPassword] = useState("");
@@ -16,11 +18,19 @@ const ResetPasswordPage = () => {
     generalError,
     clearErrors,
     isPending,
+    retryAfter,
+    setRetryAfter,
   } = useResetPassword();
+
+  const { cooldown, isActive, formatTime } = useCooldown(retryAfter);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (isActive) return;
+
     clearErrors();
+    setRetryAfter(null);
     if (password !== confirmPassword) {
       toast.error("Passwords do not match");
       return;
@@ -33,7 +43,6 @@ const ResetPasswordPage = () => {
     <div className="h-screen flex items-center justify-center p-4 sm:p-6 md:p-8">
       <div className="border border-primary/25 flex flex-col max-w-4xl mx-auto bg-base-100 rounded-xl shadow-lg overflow-hidden p-6">
         <div className="mx-auto p-4 sm:p-6 flex flex-col">
-          {/* LOGO */}
           <div className="mb-2 flex items-center justify-center gap-2">
             <AppleIcon className="size-9 text-primary" />
             <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary  tracking-wider">
@@ -41,7 +50,6 @@ const ResetPasswordPage = () => {
             </span>
           </div>
         </div>
-        {/* ERROR MESSAGE */}
         {generalError && <ErrorAlert message={generalError} />}
 
         <div className="w-full">
@@ -80,13 +88,15 @@ const ResetPasswordPage = () => {
                   <button
                     type="submit"
                     className="btn btn-primary w-full"
-                    disabled={isPending}
+                    disabled={isPending || isActive}
                   >
                     {isPending ? (
                       <>
                         <span className="loading loading-spinner loading-xs"></span>
                         Resetting...
                       </>
+                    ) : isActive ? (
+                      `Wait ${formatTime} to retry`
                     ) : (
                       "Set New Password"
                     )}

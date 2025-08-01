@@ -2,6 +2,7 @@ import { useState } from "react";
 import { AppleIcon, ArrowLeft, Loader, Mail } from "lucide-react";
 import { Link } from "react-router";
 import useForgotPassword from "../hooks/useForgotPassword";
+import { useCooldown } from "../hooks/useCooldown";
 import ErrorAlert from "../components/ErrorAlert";
 
 const ForgotPasswordPage = () => {
@@ -14,11 +15,18 @@ const ForgotPasswordPage = () => {
     clearErrors,
     isPending,
     isSuccess,
+    retryAfter,
+    setRetryAfter,
   } = useForgotPassword();
+
+  const { cooldown, isActive, formatTime } = useCooldown(retryAfter);
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    if (isActive) return;
+
     clearErrors();
+    setRetryAfter(null);
     forgotPasswordMutation({ email });
   };
 
@@ -72,13 +80,15 @@ const ForgotPasswordPage = () => {
                   <button
                     type="submit"
                     className="btn btn-primary w-full"
-                    disabled={isPending}
+                    disabled={isPending || isActive}
                   >
                     {isPending ? (
                       <>
                         <span className="loading loading-spinner loading-xs"></span>
                         Sending link...
                       </>
+                    ) : isActive ? (
+                      `Wait ${formatTime} to retry`
                     ) : (
                       "Send Reset Link"
                     )}

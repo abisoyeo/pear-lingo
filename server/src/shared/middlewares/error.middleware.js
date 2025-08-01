@@ -76,7 +76,16 @@ const errorHandler = (error, req, res, next) => {
   }
 
   // ─── Client Response ──────────────────────────────────
-  
+
+  // For rate limiting errors, include retryAfter in response
+  if (status === 429 && error.details?.retryAfter) {
+    return res.status(status).json({
+      success: false,
+      message: error.message,
+      retryAfter: error.details.retryAfter,
+    });
+  }
+
   res.status(status).json({
     success: false,
     message: error.message,

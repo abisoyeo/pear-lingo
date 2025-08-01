@@ -1,7 +1,8 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { AppleIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import useVerifyEmail from "../hooks/useVerifyEmail";
+import { useCooldown } from "../hooks/useCooldown";
 import ErrorAlert from "../components/ErrorAlert";
 import { resendVerificationEmail } from "../lib/api";
 
@@ -17,6 +18,7 @@ const EmailVerificationPage = () => {
   const inputRefs = useRef([]);
 
   const [feedback, setFeedback] = useState(null);
+  const [resendRetryAfter, setResendRetryAfter] = useState(null);
 
   const handleChange = (index, value) => {
     const newCode = [...verificationCode];
@@ -54,8 +56,15 @@ const EmailVerificationPage = () => {
     mutationFn: resendVerificationEmail,
     onSuccess: () => {
       setFeedback("Verification email sent successfully!");
+      setResendRetryAfter(null);
     },
     onError: (error) => {
+      // Handle rate limiting error
+      const errorRetryAfter = error?.response?.data?.retryAfter;
+      if (errorRetryAfter) {
+        setResendRetryAfter(errorRetryAfter);
+      }
+
       const message =
         error?.response?.data?.error ||
         error?.response?.data?.message ||
@@ -71,17 +80,34 @@ const EmailVerificationPage = () => {
     generalError,
     clearErrors,
     isPending,
+    setRetryAfter,
+    retryAfter: verifyRetryAfter,
   } = useVerifyEmail();
+
+  const {
+    cooldown: resendCooldown,
+    isActive: resendIsActive,
+    formatTime: resendFormatTime,
+  } = useCooldown(resendRetryAfter);
+  const {
+    cooldown: verifyCooldown,
+    isActive: verifyIsActive,
+    formatTime: verifyFormatTime,
+  } = useCooldown(verifyRetryAfter);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     clearErrors();
+    setRetryAfter(null);
     const code = verificationCode.join("");
     verifyEmailMutation({ code });
   };
 
   const handleResendCode = async () => {
+    if (resendIsActive) return;
+
     setFeedback(null);
+    setResendRetryAfter(null);
     resendVerificationMutation.mutate();
   };
 
@@ -138,13 +164,18 @@ const EmailVerificationPage = () => {
               </p>
             )}
 
-            <button className="btn btn-primary w-full">
+            <button
+              className="btn btn-primary w-full"
+              disabled={isPending || verifyIsActive}
+            >
               {isPending ? (
                 <>
                   {" "}
                   <span className="loading loading-spinner loading-xs"></span>
                   Verifying...
                 </>
+              ) : verifyIsActive ? (
+                `Wait ${verifyFormatTime} to retry`
               ) : (
                 "Verify Email"
               )}
@@ -156,11 +187,17 @@ const EmailVerificationPage = () => {
             Didn't receive the code?{" "}
             <button
               onClick={handleResendCode}
-              disabled={resendVerificationMutation.isPending}
-              className="text-primary font-semibold hover:underline disabled:opacity-50"
+              disabled={resendVerificationMutation.isPending || resendIsActive}
+              className={`font-semibold ${
+                resendIsActive || resendVerificationMutation.isPending
+                  ? "text-gray-400 cursor-not-allowed"
+                  : "text-primary hover:underline"
+              }`}
             >
               {resendVerificationMutation.isPending
                 ? "Sending..."
+                : resendIsActive
+                ? `Resend in ${resendFormatTime}`
                 : "Resend Code"}
             </button>
           </p>
