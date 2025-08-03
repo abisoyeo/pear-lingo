@@ -117,7 +117,10 @@ export async function verifyUserEmail(code) {
 
 export async function loginUser({ email, password }) {
   const user = await User.findOne({ email }).select("+password");
+
   if (!user) throw new ApiError("Invalid email or password", 401);
+  if (user.isSuspended) throw new ApiError("Your account is suspended", 403);
+  if (user.isDeleted) throw new ApiError("Account no longer exists", 403);
 
   const isValidPassword = await user.isValidPassword(password);
   if (!isValidPassword) throw new ApiError("Invalid email or password", 401);

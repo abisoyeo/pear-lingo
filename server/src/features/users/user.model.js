@@ -67,6 +67,14 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // Suspension fields
+    isSuspended: { type: Boolean, default: false },
+    suspendedAt: { type: Date },
+    suspensionReason: { type: String },
+
+    // Soft delete fields
+    isDeleted: { type: Boolean, default: false },
+    deletedAt: { type: Date },
 
     friends: [
       {
