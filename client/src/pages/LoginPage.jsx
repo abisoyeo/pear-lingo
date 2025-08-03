@@ -4,6 +4,7 @@ import { Link } from "react-router";
 import useLogin from "../hooks/useLogin";
 import { useCooldown } from "../hooks/useCooldown";
 import ErrorAlert from "../components/ErrorAlert";
+import GoogleAuthButton from "../components/GoogleAuthButton";
 
 const LoginPage = () => {
   const [loginData, setLoginData] = useState({
@@ -114,23 +115,39 @@ const LoginPage = () => {
                         Forgot password?
                       </Link>
                     </div>
-                    <button
-                      type="submit"
-                      className="btn btn-primary w-full"
-                      disabled={isPending || isActive}
-                    >
-                      {isPending ? (
-                        <>
-                          <span className="loading loading-spinner loading-xs"></span>
-                          Signing in...
-                        </>
-                      ) : isActive ? (
-                        `Wait ${formatTime} to retry`
-                      ) : (
-                        "Sign In"
-                      )}
-                    </button>
 
+                    <div className="space-y-2">
+                      {/* SIGN IN BUTTON */}
+                      <button
+                        type="submit"
+                        className="w-full rounded-full bg-primary text-white text-sm font-medium px-4 hover:bg-primary/90 transition"
+                        style={{
+                          fontFamily: "Roboto, sans-serif",
+                          height: "40px",
+                        }}
+                        disabled={isPending || isActive}
+                      >
+                        {isPending ? (
+                          <>
+                            <span className="loading loading-spinner loading-xs"></span>
+                            Signing in...
+                          </>
+                        ) : isActive ? (
+                          `Wait ${formatTime} to retry`
+                        ) : (
+                          "Sign In"
+                        )}
+                      </button>
+                      {/* Divider */}
+                      <div className="flex items-center gap-2">
+                        <hr className="flex-grow border-gray-300" />
+                        <span className="text-gray-500 text-xs">OR</span>
+                        <hr className="flex-grow border-gray-300" />
+                      </div>
+
+                      {/* Google Button */}
+                      <GoogleAuthButton text="Sign in with Google" />
+                    </div>
                     <div className="text-center mt-4">
                       <p className="text-sm">
                         Don't have an account?{" "}

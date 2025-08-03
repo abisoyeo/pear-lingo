@@ -10,13 +10,16 @@ const PasswordCriteria = ({ password }) => {
   ];
 
   return (
-    <div className="mt-2 space-y-1">
+    <div className="mt-1 space-y-0.5">
       {criteria.map((item) => (
-        <div key={item.label} className="flex items-center text-xs">
+        <div
+          key={item.label}
+          className="flex items-center text-[10px] leading-tight"
+        >
           {item.met ? (
-            <Check className="size-4 text-green-500 mr-2" />
+            <Check className="size-3 text-green-500 mr-1" />
           ) : (
-            <X className="size-4 text-gray-500 mr-2" />
+            <X className="size-3 text-gray-500 mr-1" />
           )}
           <span className={item.met ? "text-green-500" : "text-gray-400"}>
             {item.label}
@@ -55,26 +58,28 @@ const PasswordStrengthMeter = ({ password }) => {
   };
 
   return (
-    <div className="mt-2">
-      <div className="flex justify-between items-center mb-1">
-        <span className="text-xs text-gray-400">Password strength</span>
-        <span className="text-xs text-gray-400">
+    <div className="mt-1 space-y-0.5">
+      <div className="flex justify-between items-center">
+        <span className="text-[10px] text-gray-400">Strength</span>
+        <span className="text-[10px] text-gray-400">
           {getStrengthText(strength)}
         </span>
       </div>
 
-      <div className="flex space-x-1">
+      <div className="flex space-x-0.5">
         {[...Array(4)].map((_, index) => (
           <div
             key={index}
-            className={`h-1 w-1/4 rounded-full transition-colors duration-300 
+            className={`h-0.5 w-1/4 rounded-full transition-colors duration-300 
                 ${index < strength ? getColor(strength) : "bg-gray-600"}
               `}
           />
         ))}
       </div>
+
       <PasswordCriteria password={password} />
     </div>
   );
 };
+
 export default PasswordStrengthMeter;

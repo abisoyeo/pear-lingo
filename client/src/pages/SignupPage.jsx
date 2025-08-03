@@ -5,6 +5,7 @@ import ErrorAlert from "../components/ErrorAlert";
 import useSignUp from "../hooks/useSignup";
 import { useCooldown } from "../hooks/useCooldown";
 import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
+import GoogleAuthButton from "../components/GoogleAuthButton";
 
 const SignupPage = () => {
   const [signupData, setSignupData] = useState({
@@ -94,7 +95,7 @@ const SignupPage = () => {
                     <input
                       type="email"
                       placeholder="john@gmail.com"
-                      className="input input-bordered w-full"
+                      className="input input-bordered w-full "
                       value={signupData.email}
                       onChange={(e) =>
                         setSignupData({ ...signupData, email: e.target.value })
@@ -115,7 +116,7 @@ const SignupPage = () => {
                     <input
                       type="password"
                       placeholder="********"
-                      className="input input-bordered w-full"
+                      className="input input-bordered w-full "
                       value={signupData.password}
                       onChange={(e) =>
                         setSignupData({
@@ -137,7 +138,7 @@ const SignupPage = () => {
                     <label className="label cursor-pointer justify-start gap-2">
                       <input
                         type="checkbox"
-                        className="checkbox checkbox-sm"
+                        className="checkbox checkbox-xs"
                         required
                       />
                       <span className="text-xs leading-tight">
@@ -154,21 +155,36 @@ const SignupPage = () => {
                   </div>
                 </div>
 
-                <button
-                  className="btn btn-primary w-full"
-                  disabled={isPending || isActive}
-                >
-                  {isPending ? (
-                    <>
-                      <span className="loading loading-spinner loading-xs"></span>
-                      Loading...
-                    </>
-                  ) : isActive ? (
-                    `Wait ${formatTime} to retry`
-                  ) : (
-                    "Create Account"
-                  )}{" "}
-                </button>
+                <div className="space-y-2">
+                  {/* Create Account button */}
+                  <button
+                    type="submit"
+                    className="w-full rounded-full bg-primary text-white text-sm font-medium px-4 hover:bg-primary/90 transition"
+                    style={{ fontFamily: "Roboto, sans-serif", height: "40px" }}
+                    disabled={isPending || isActive}
+                  >
+                    {isPending ? (
+                      <>
+                        <span className="loading loading-spinner loading-xs"></span>
+                        Loading...
+                      </>
+                    ) : isActive ? (
+                      `Wait ${formatTime} to retry`
+                    ) : (
+                      "Create Account"
+                    )}
+                  </button>
+
+                  {/* Divider */}
+                  <div className="flex items-center gap-2">
+                    <hr className="flex-grow border-gray-300" />
+                    <span className="text-gray-500 text-xs">OR</span>
+                    <hr className="flex-grow border-gray-300" />
+                  </div>
+
+                  {/* Google Button */}
+                  <GoogleAuthButton text="Sign up with Google" />
+                </div>
 
                 <div className="text-center mt-4">
                   <p className="text-sm">
