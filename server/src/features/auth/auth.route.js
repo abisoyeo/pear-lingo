@@ -10,7 +10,9 @@ import {
   resetPassword,
   resendEmail,
   changePassword,
+  googleAuth,
 } from "./auth.controller.js";
+import passport from "./passport.config.js";
 import validate from "../../shared/middlewares/validate.middleware.js";
 import { authValidation } from "./auth.validator.js";
 import { protectRoute } from "./auth.middleware.js";
@@ -32,6 +34,21 @@ router.post(
   validate(authValidation.login),
   login
 );
+
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: `${process.env.CLIENT_URL}/login`,
+  }),
+  googleAuth
+);
+
 router.post(
   "/forgot-password",
   createRateLimiter(rateLimitConfig.forgotPassword),

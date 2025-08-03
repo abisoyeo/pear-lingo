@@ -19,6 +19,26 @@ import {
   sendWelcomeEmail,
 } from "../../shared/mailtrap/emails.js";
 
+export async function googleAuth(req, res, next) {
+  try {
+    const user = req.user;
+    if (!user) {
+      return next(new Error("Authentication failed"));
+    }
+    const token = user.generateAuthToken();
+
+    res.cookie("jwt", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+    });
+    // await sendWelcomeEmail(user.email, user.fullName);
+    res.redirect(process.env.CLIENT_URL);
+  } catch (error) {
+    next(error);
+  }
+}
+
 export async function signup(req, res, next) {
   try {
     const { email, password, fullName } = req.body;
@@ -42,6 +62,7 @@ export async function signup(req, res, next) {
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       secure: process.env.NODE_ENV === "production",
+      // domain: ".example.com", // Uncomment and set your domain if needed
     });
 
     sendResponse(res, 201, "User registered successfully", {
@@ -71,6 +92,7 @@ export async function login(req, res, next) {
       httpOnly: true,
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
       secure: process.env.NODE_ENV === "production",
+      // domain: ".example.com", // Uncomment and set your domain if needed
     });
 
     sendResponse(res, 200, "User signed in successfully", {
@@ -83,7 +105,13 @@ export async function login(req, res, next) {
 }
 
 export async function logout(req, res, next) {
-  res.clearCookie("jwt");
+  res.clearCookie("jwt", {
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    secure: process.env.NODE_ENV === "production",
+    // domain: ".example.com", // Uncomment and set your domain if needed
+  });
   sendResponse(res, 200, "Logout Successful");
 }
 

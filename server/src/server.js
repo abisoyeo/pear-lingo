@@ -8,6 +8,7 @@ import express from "express";
 import * as Sentry from "@sentry/node";
 import { initSentry } from "./shared/config/sentry.config.js";
 import httpLogger from "./shared/middlewares/httpLogger.middleware.js";
+import passport from "./features/auth/passport.config.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import helmet from "helmet";
@@ -19,6 +20,7 @@ import { connectDB } from "./shared/config/db.config.js";
 import errorHandler from "./shared/middlewares/error.middleware.js";
 import logger from "./shared/utils/logger.js";
 import ApiError from "./shared/utils/apiError.util.js";
+import sendResponse from "./shared/utils/sendResponse.util.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -33,9 +35,9 @@ app.use(
 );
 
 // app.use(helmet());
-
 app.use(express.json());
 app.use(cookieParser());
+app.use(passport.initialize());
 
 // initSentry(app);
 
@@ -48,6 +50,13 @@ app.use(httpLogger);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);
+
+app.get("/api/health", (req, res) => {
+  sendResponse(res, 200, "Server is healthy", {
+    status: "OK",
+    timestamp: new Date().toISOString(),
+  });
+});
 
 app.use("/api/*", (req, res, next) => {
   next(new ApiError(404, `Cannot ${req.method} ${req.originalUrl}`));

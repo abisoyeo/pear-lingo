@@ -13,12 +13,32 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
       trim: true,
+      lowercase: true,
+    },
+    provider: {
+      type: String,
+      enum: ["local", "google"],
+      default: "local",
+    },
+    providerId: {
+      type: String,
+      unique: true,
+      sparse: true,
+      trim: true,
     },
     password: {
       type: String,
-      required: true,
+      required: function () {
+        // Only require password for local auth users
+        return this.provider === "local";
+      },
       minlength: 6,
       select: false,
+    },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
     },
     bio: {
       type: String,
@@ -47,6 +67,7 @@ const userSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+
     friends: [
       {
         type: mongoose.Schema.Types.ObjectId,
