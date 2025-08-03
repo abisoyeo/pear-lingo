@@ -38,6 +38,19 @@ export const authValidation = {
     }),
   }),
 
+  changePassword: Joi.object({
+    currentPassword: Joi.string().min(6).required().messages({
+      "string.empty": "Password cannot be empty",
+      "string.min": "Password must be at least 6 characters",
+      "any.required": "Password is required",
+    }),
+    newPassword: Joi.string().min(6).required().messages({
+      "string.empty": "New Password cannot be empty",
+      "string.min": "New Password must be at least 6 characters",
+      "any.required": "New Password is required",
+    }),
+  }),
+
   resetPassword: Joi.object({
     password: Joi.string().min(6).required().messages({
       "string.empty": "Password cannot be empty",

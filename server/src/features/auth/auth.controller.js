@@ -1,6 +1,7 @@
 import sendResponse from "../../shared/utils/sendResponse.util.js";
 import {
   addStreamUser,
+  changeUserPassword,
   createUser,
   fetchProfile,
   forgotUserPassword,
@@ -11,6 +12,7 @@ import {
   verifyUserEmail,
 } from "./auth.service.js";
 import {
+  sendPasswordChangeSuccessEmail,
   sendPasswordResetEmail,
   sendResetSuccessEmail,
   sendVerificationEmail,
@@ -143,6 +145,24 @@ export const resetPassword = async (req, res, next) => {
     // await sendResetSuccessEmail(user.email);
 
     sendResponse(res, 200, "Password reset successful");
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const changePassword = async (req, res, next) => {
+  try {
+    const userId = req.user.id;
+    const { currentPassword, newPassword } = req.body;
+
+    const user = await changeUserPassword(userId, currentPassword, newPassword);
+
+    // await sendPasswordChangeSuccessEmail(user.email);
+
+    sendResponse(res, 200, "Password changed successfully", {
+      id: user.id,
+      email: user.email,
+    });
   } catch (error) {
     next(error);
   }

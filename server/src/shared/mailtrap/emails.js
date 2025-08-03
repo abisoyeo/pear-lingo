@@ -1,6 +1,6 @@
 import ApiError from "../utils/apiError.util.js";
-import logger from "../utils/logger.js";
 import {
+  PASSWORD_CHANGE_SUCCESS_TEMPLATE,
   PASSWORD_RESET_REQUEST_TEMPLATE,
   PASSWORD_RESET_SUCCESS_TEMPLATE,
   VERIFICATION_EMAIL_TEMPLATE,
@@ -82,6 +82,25 @@ export const sendResetSuccessEmail = async (email) => {
   } catch (error) {
     throw new ApiError(
       "Error sending password reset success email",
+      500,
+      error.message
+    );
+  }
+};
+export const sendPasswordChangeSuccessEmail = async (email) => {
+  const recipient = [{ email }];
+
+  try {
+    await mailtrapClient.send({
+      from: sender,
+      to: recipient,
+      subject: "Password Change Successful",
+      html: PASSWORD_CHANGE_SUCCESS_TEMPLATE,
+      category: "Password Change",
+    });
+  } catch (error) {
+    throw new ApiError(
+      "Error sending password change success email",
       500,
       error.message
     );

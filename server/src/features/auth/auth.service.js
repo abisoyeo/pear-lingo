@@ -157,6 +157,18 @@ export async function resetUserPassword(token, password) {
   return user;
 }
 
+export async function changeUserPassword(userId, oldPassword, newPassword) {
+  const user = await User.findById(userId).select("+password");
+  if (!user) throw new ApiError("User not found", 404);
+
+  const isMatch = await user.isValidPassword(oldPassword);
+  if (!isMatch) throw new ApiError("Current password is incorrect", 400);
+
+  user.password = newPassword;
+  await user.save();
+  return user;
+}
+
 export async function fetchProfile(userId) {
   const user = await User.findById(userId).select(
     "fullName email profilePic bio location nativeLanguage learningLanguage isOnboarded isVerified "

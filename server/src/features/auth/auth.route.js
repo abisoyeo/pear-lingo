@@ -9,6 +9,7 @@ import {
   forgotPassword,
   resetPassword,
   resendEmail,
+  changePassword,
 } from "./auth.controller.js";
 import validate from "../../shared/middlewares/validate.middleware.js";
 import { authValidation } from "./auth.validator.js";
@@ -32,12 +33,6 @@ router.post(
   login
 );
 router.post(
-  "/verify-email",
-  createRateLimiter(rateLimitConfig.verifyEmail),
-  validate(authValidation.verifyEmail),
-  verifyEmail
-);
-router.post(
   "/forgot-password",
   createRateLimiter(rateLimitConfig.forgotPassword),
   validate(authValidation.forgotPassword),
@@ -54,9 +49,20 @@ router.post(
 router.use(protectRoute);
 
 router.post(
+  "/verify-email",
+  createRateLimiter(rateLimitConfig.verifyEmail),
+  validate(authValidation.verifyEmail),
+  verifyEmail
+);
+router.post(
   "/verification-email/resend",
   createRateLimiter(rateLimitConfig.resendVerification),
   resendEmail
+);
+router.post(
+  "/change-password",
+  validate(authValidation.changePassword),
+  changePassword
 );
 router.post("/onboarding", validate(authValidation.onboarding), onboard);
 router.get("/me", profile);
