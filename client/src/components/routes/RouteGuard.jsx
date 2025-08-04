@@ -32,7 +32,7 @@ const RouteGuard = ({
   if (requireAuth && !authUser) return <Navigate to="/login" replace />;
 
   if (authUser) {
-    if (requireAdminRole && authUser.role !== "admin")
+    if (requireAdminRole && !["admin", "super_admin"].includes(authUser.role))
       return <Navigate to="/" replace />;
 
     // Priority: unverified check

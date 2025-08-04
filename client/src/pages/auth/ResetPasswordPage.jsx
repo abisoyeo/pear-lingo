@@ -32,7 +32,7 @@ const ResetPasswordPage = () => {
     clearErrors();
     setRetryAfter(null);
     if (password !== confirmPassword) {
-      toast.error("Passwords do not match");
+      toast.error("New passwords do not match");
       return;
     }
 

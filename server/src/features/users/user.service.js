@@ -6,12 +6,17 @@ export async function recommendUsers(userId) {
   const currentUser = await User.findById(userId).select("friends role");
   const excludedFriendIds = currentUser?.friends || [];
 
+  // If current user is super_admin, show all users
   // If current user is admin, only show other admins
-  // If current user is regular user, exclude all admins
-  const roleFilter =
-    currentUser?.role === "admin"
-      ? { role: "admin" }
-      : { role: { $ne: "admin" } };
+  // If current user is regular user, exclude all admins and super_admins
+  let roleFilter;
+  if (currentUser?.role === "super_admin") {
+    roleFilter = {}; // Show all users
+  } else if (currentUser?.role === "admin") {
+    roleFilter = { role: "admin" }; // Only show other admins
+  } else {
+    roleFilter = { role: { $nin: ["admin", "super_admin"] } }; // Exclude admins and super_admins
+  }
 
   return await User.find({
     $and: [
@@ -45,10 +50,21 @@ export async function sendRequest(userData) {
     throw new ApiError("Recipient not found", 404);
   }
 
-  // Prevent regular users from sending requests to admins
-  if (currentUser?.role !== "admin" && recipient.role === "admin") {
+  // Prevent regular users from sending requests to admins and super_admins
+  if (
+    currentUser?.role === "user" &&
+    (recipient.role === "admin" || recipient.role === "super_admin")
+  ) {
     throw new ApiError(
       "You cannot send friend requests to administrators",
+      403
+    );
+  }
+
+  // Prevent admins from sending requests to super_admins
+  if (currentUser?.role === "admin" && recipient.role === "super_admin") {
+    throw new ApiError(
+      "You cannot send friend requests to super administrators",
       403
     );
   }
@@ -127,4 +143,45 @@ export async function outgoingRequests(userId) {
   );
 
   return requests.filter((req) => req.recipient !== null);
+}
+
+export async function updateProfile(userId, profileData) {
+  const allowedFields = [
+    "fullName",
+    "bio",
+    "nativeLanguage",
+    "learningLanguage",
+    "location",
+    "profilePic",
+  ];
+  const updateData = {};
+
+  for (const field of allowedFields) {
+    if (profileData[field] !== undefined) {
+      updateData[field] = profileData[field];
+    }
+  }
+
+  const user = await User.findByIdAndUpdate(userId, updateData, { new: true });
+  if (!user) throw new ApiError("User not found", 404);
+  return user;
+}
+
+export async function changePassword(userId, passwordData) {
+  const { currentPassword, newPassword } = passwordData;
+
+  const user = await User.findById(userId).select("+password");
+  if (!user) throw new ApiError("User not found", 404);
+
+  // Verify current password
+  const isPasswordValid = await user.comparePassword(currentPassword);
+  if (!isPasswordValid) {
+    throw new ApiError("Current password is incorrect", 400);
+  }
+
+  // Update password
+  user.password = newPassword;
+  await user.save();
+
+  return { message: "Password changed successfully" };
 }

@@ -23,6 +23,7 @@ import AdminUsersPage from "./pages/admin/AdminUsersPage";
 import AdminPage from "./pages/admin/AdminPage";
 import CreateAdminPage from "./pages/admin/CreateAdminPage";
 import AdminRoute from "./components/routes/AdminRoute";
+import ProfilePage from "./pages/user/ProfilePage";
 
 const App = () => {
   const { theme } = useThemeStore();
@@ -43,6 +44,7 @@ const App = () => {
             <Route index element={<HomePage />} />
             <Route path="notifications" element={<NotificationsPage />} />
             <Route path="friends" element={<FriendPage />} />
+            <Route path="profile" element={<ProfilePage />} />
             <Route path="call/:id" element={<CallPage />} />
             <Route path="chat/:id" element={<ChatPage />} />
           </Route>

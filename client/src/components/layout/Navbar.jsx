@@ -37,11 +37,13 @@ const Navbar = ({ onOpenDrawer }) => {
 
           <ThemeSelector />
 
-          <div className="avatar">
-            <div className="w-8 sm:w-9 rounded-full">
-              <img src={authUser?.profilePic} alt="User Avatar" />
+          <Link to="/profile">
+            <div className="avatar cursor-pointer">
+              <div className="w-8 sm:w-9 rounded-full transition-all hover:ring-2 hover:ring-gray-400/50">
+                <img src={authUser?.profilePic} alt="User Avatar" />
+              </div>
             </div>
-          </div>
+          </Link>
 
           <button
             className="btn btn-ghost btn-circle btn-sm sm:btn-md"

@@ -87,3 +87,16 @@ export async function getStreamToken() {
   const response = await axiosInstance.get("/chat/token");
   return response.data.data;
 }
+
+export async function updateProfile(profileData) {
+  const response = await axiosInstance.put("/users/profile", profileData);
+  return response.data.data;
+}
+
+export async function changePassword(passwordData) {
+  const response = await axiosInstance.put(
+    "/auth/change-password",
+    passwordData
+  );
+  return response.data.data;
+}

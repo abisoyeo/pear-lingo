@@ -47,7 +47,7 @@ const userSchema = new mongoose.Schema(
     },
     profilePic: {
       type: String,
-      default: "",
+      default: "https://avatar.iran.liara.run/public/1.png",
     },
     nativeLanguage: {
       type: String,

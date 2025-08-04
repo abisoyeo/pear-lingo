@@ -5,6 +5,7 @@ import {
   processFriendRequest,
   recommendUsers,
   sendRequest,
+  updateProfile,
 } from "./user.service.js";
 import sendResponse from "../../shared/utils/sendResponse.util.js";
 
@@ -90,6 +91,15 @@ export async function getOutgoingFriendRequests(req, res, next) {
       "Outgoing friend requests fetched successfully",
       myOutgoingRequests
     );
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function updateUserProfile(req, res, next) {
+  try {
+    const updatedUser = await updateProfile(req.user.id, req.body);
+    sendResponse(res, 200, "Profile updated successfully", updatedUser);
   } catch (error) {
     next(error);
   }

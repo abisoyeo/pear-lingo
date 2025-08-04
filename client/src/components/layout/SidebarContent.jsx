@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router";
-import { BellIcon, HomeIcon, UsersIcon } from "lucide-react";
+import { BellIcon, HomeIcon, UsersIcon, UserIcon } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
 
 const SidebarContent = () => {
@@ -28,7 +28,9 @@ const SidebarContent = () => {
         >
           <UsersIcon className="size-5 text-base-content opacity-70" />
           <span>
-            {authUser?.role === "admin" ? "Admin Friends" : "Friends"}
+            {authUser?.role === "admin" || authUser?.role === "super_admin"
+              ? "Admin Friends"
+              : "Friends"}
           </span>
         </Link>
 
@@ -40,11 +42,23 @@ const SidebarContent = () => {
         >
           <BellIcon className="size-5 text-base-content opacity-70" />
           <span>
-            {authUser?.role === "admin" ? "Admin Alerts" : "Notifications"}
+            {authUser?.role === "admin" || authUser?.role === "super_admin"
+              ? "Admin Alerts"
+              : "Notifications"}
           </span>
         </Link>
 
-        {authUser?.role === "admin" && (
+        <Link
+          to="/profile"
+          className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case ${
+            currentPath === "/profile" ? "btn-active" : ""
+          }`}
+        >
+          <UserIcon className="size-5 text-base-content opacity-70" />
+          <span>Profile</span>
+        </Link>
+
+        {(authUser?.role === "admin" || authUser?.role === "super_admin") && (
           <>
             <Link
               to="/admin"
@@ -53,7 +67,9 @@ const SidebarContent = () => {
               }`}
             >
               <UsersIcon className="size-5 text-base-content opacity-70" />
-              <span>Admin</span>
+              <span>
+                {authUser?.role === "super_admin" ? "Super Admin" : "Admin"}
+              </span>
             </Link>
 
             <Link
@@ -66,21 +82,26 @@ const SidebarContent = () => {
               <span>Users</span>
             </Link>
 
-            <Link
-              to="/admin/create-admin"
-              className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case ${
-                currentPath === "/admin/create-admin" ? "btn-active" : ""
-              }`}
-            >
-              <UsersIcon className="size-5 text-base-content opacity-70" />
-              <span>Create Admin</span>
-            </Link>
+            {authUser?.role === "super_admin" && (
+              <Link
+                to="/admin/create-admin"
+                className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case ${
+                  currentPath === "/admin/create-admin" ? "btn-active" : ""
+                }`}
+              >
+                <UsersIcon className="size-5 text-base-content opacity-70" />
+                <span>Create Admin</span>
+              </Link>
+            )}
           </>
         )}
       </nav>
 
       <div className="p-4 border-t border-base-300 mt-auto">
-        <div className="flex items-center gap-3">
+        <Link
+          to="/profile"
+          className="flex items-center gap-3 hover:bg-base-300 p-2 rounded-lg transition-colors"
+        >
           <div className="avatar">
             <div className="w-10 rounded-full">
               <img src={authUser?.profilePic} alt="User Avatar" />
@@ -93,7 +114,7 @@ const SidebarContent = () => {
               Online
             </p>
           </div>
-        </div>
+        </Link>
       </div>
     </div>
   );

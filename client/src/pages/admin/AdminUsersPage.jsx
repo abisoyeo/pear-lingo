@@ -11,10 +11,12 @@ import {
   handleToastSuccess,
   handleToastError,
 } from "../../utils/toastDisplayHandler";
+import { useAuth } from "../../context/AuthContext";
 
 const AdminUsersPage = () => {
   const { data: users, isLoading } = useAdminUsers();
   const queryClient = useQueryClient();
+  const { authUser } = useAuth();
 
   const createMutation = (apiFn, successMsg) =>
     useMutation({
@@ -72,12 +74,14 @@ const AdminUsersPage = () => {
                   <td>
                     <span
                       className={`badge ${
-                        user.role === "admin"
+                        user.role === "super_admin"
+                          ? "badge-error"
+                          : user.role === "admin"
                           ? "badge-primary"
                           : "badge-secondary"
                       }`}
                     >
-                      {user.role}
+                      {user.role === "super_admin" ? "Super Admin" : user.role}
                     </span>
                   </td>
                   <td>
@@ -99,6 +103,7 @@ const AdminUsersPage = () => {
                   </td>
                   <td>
                     <div className="flex flex-wrap gap-2 justify-center">
+                      {/* Suspend/Unsuspend - Only super admins can suspend admins */}
                       {user.isSuspended ? (
                         <button
                           onClick={() => unsuspendUserMutation.mutate(user.id)}
@@ -113,7 +118,20 @@ const AdminUsersPage = () => {
                         <button
                           onClick={() => suspendUserMutation.mutate(user.id)}
                           disabled={suspendUserMutation.isPending}
-                          className="btn btn-sm btn-warning"
+                          className={`btn btn-sm ${
+                            (user.role === "admin" ||
+                              user.role === "super_admin") &&
+                            authUser?.role !== "super_admin"
+                              ? "btn-disabled"
+                              : "btn-warning"
+                          }`}
+                          title={
+                            (user.role === "admin" ||
+                              user.role === "super_admin") &&
+                            authUser?.role !== "super_admin"
+                              ? "Only super admins can suspend admins"
+                              : ""
+                          }
                         >
                           {suspendUserMutation.isPending
                             ? "Suspending..."
@@ -121,21 +139,56 @@ const AdminUsersPage = () => {
                         </button>
                       )}
 
+                      {/* Role Toggle - Only super admins can change to admin roles */}
                       <button
-                        onClick={() =>
+                        onClick={() => {
+                          let newRole = "user";
+                          if (user.role === "user") {
+                            newRole =
+                              authUser?.role === "super_admin"
+                                ? "admin"
+                                : "user";
+                          } else if (user.role === "admin") {
+                            newRole = "user";
+                          } else if (user.role === "super_admin") {
+                            newRole = "admin";
+                          }
                           changeUserRoleMutation.mutate({
                             id: user.id,
-                            role: user.role === "admin" ? "user" : "admin",
-                          })
+                            role: newRole,
+                          });
+                        }}
+                        disabled={
+                          changeUserRoleMutation.isPending ||
+                          (user.role === "admin" &&
+                            authUser?.role !== "super_admin") ||
+                          (user.role === "super_admin" &&
+                            authUser?.role !== "super_admin")
                         }
-                        disabled={changeUserRoleMutation.isPending}
-                        className="btn btn-sm btn-info"
+                        className={`btn btn-sm ${
+                          (user.role === "admin" &&
+                            authUser?.role !== "super_admin") ||
+                          (user.role === "super_admin" &&
+                            authUser?.role !== "super_admin")
+                            ? "btn-disabled"
+                            : "btn-info"
+                        }`}
+                        title={
+                          user.role === "admin" &&
+                          authUser?.role !== "super_admin"
+                            ? "Only super admins can change admin roles"
+                            : user.role === "super_admin" &&
+                              authUser?.role !== "super_admin"
+                            ? "Only super admins can change super admin roles"
+                            : ""
+                        }
                       >
                         {changeUserRoleMutation.isPending
                           ? "Updating..."
                           : "Toggle Role"}
                       </button>
 
+                      {/* Delete/Restore */}
                       {user.isDeleted ? (
                         <button
                           onClick={() => restoreUserMutation.mutate(user.id)}
@@ -149,8 +202,26 @@ const AdminUsersPage = () => {
                       ) : (
                         <button
                           onClick={() => deleteUserMutation.mutate(user.id)}
-                          disabled={deleteUserMutation.isPending}
-                          className="btn btn-sm btn-error"
+                          disabled={
+                            deleteUserMutation.isPending ||
+                            ((user.role === "admin" ||
+                              user.role === "super_admin") &&
+                              authUser?.role !== "super_admin")
+                          }
+                          className={`btn btn-sm ${
+                            (user.role === "admin" ||
+                              user.role === "super_admin") &&
+                            authUser?.role !== "super_admin"
+                              ? "btn-disabled"
+                              : "btn-error"
+                          }`}
+                          title={
+                            (user.role === "admin" ||
+                              user.role === "super_admin") &&
+                            authUser?.role !== "super_admin"
+                              ? "Only super admins can delete admins"
+                              : ""
+                          }
                         >
                           {deleteUserMutation.isPending
                             ? "Deleting..."

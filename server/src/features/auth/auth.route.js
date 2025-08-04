@@ -76,7 +76,7 @@ router.post(
   createRateLimiter(rateLimitConfig.resendVerification),
   resendEmail
 );
-router.post(
+router.put(
   "/change-password",
   validate(authValidation.changePassword),
   changePassword
