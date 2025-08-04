@@ -3,9 +3,11 @@ import {
   protectRoute,
   requireVerifiedAndOnboardedUser,
 } from "../auth/auth.middleware.js";
-import { getStreamToken } from "./chat.controller.js";
+import { getStreamToken, handleStreamWebhook } from "./chat.controller.js";
 
 const router = express.Router();
+
+router.post("/webhook", express.json(), handleStreamWebhook);
 
 router.get(
   "/token",

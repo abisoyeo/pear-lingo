@@ -92,7 +92,15 @@ export async function sendRequest(userData) {
     recipient: recipientId,
   });
 
-  return friendRequest;
+  const emailData = {
+    recipientEmail: recipient.email,
+    recipientName: recipient.fullName,
+    senderName: currentUser.fullName,
+    senderNativeLanguage: currentUser.nativeLanguage,
+    senderLearningLanguage: currentUser.learningLanguage,
+  };
+
+  return { friendRequest, emailData };
 }
 
 export async function acceptRequest(requestData) {

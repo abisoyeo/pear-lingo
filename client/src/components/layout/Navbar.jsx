@@ -3,6 +3,7 @@ import { Link } from "react-router";
 import useLogout from "../../hooks/useLogout";
 import ThemeSelector from "./ThemeSelector";
 import { useAuth } from "../../context/AuthContext";
+import UnreadNotificationBadge from "./UnreadNotificationBadge";
 
 const Navbar = ({ onOpenDrawer }) => {
   const { authUser } = useAuth();
@@ -29,6 +30,9 @@ const Navbar = ({ onOpenDrawer }) => {
 
         {/* Right-side buttons */}
         <div className="flex items-center gap-1 sm:gap-2 md:gap-3 lg:gap-4 ml-auto shrink-0">
+          {/* Unread notification badge */}
+          <UnreadNotificationBadge />
+
           <Link to="/notifications">
             <button className="btn btn-ghost btn-circle btn-sm sm:btn-md">
               <BellIcon className="h-5 w-5 sm:h-6 sm:w-6 text-base-content opacity-70" />

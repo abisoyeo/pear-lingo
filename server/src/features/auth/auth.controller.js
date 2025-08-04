@@ -25,6 +25,9 @@ export async function googleAuth(req, res, next) {
     if (!user) {
       return next(new Error("Authentication failed"));
     }
+
+    await addStreamUser(user);
+
     const token = user.generateAuthToken();
 
     res.cookie("jwt", token, {

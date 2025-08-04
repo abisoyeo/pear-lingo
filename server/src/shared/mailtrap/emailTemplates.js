@@ -128,3 +128,68 @@ export const PASSWORD_RESET_REQUEST_TEMPLATE = `
 </body>
 </html>
 `;
+
+export const FRIEND_REQUEST_TEMPLATE = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>New Friend Request</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(to right, #2196F3, #1976D2); padding: 20px; text-align: center;">
+    <h1 style="color: white; margin: 0;">New Friend Request</h1>
+  </div>
+  <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <p>Hello {recipientName},</p>
+    <p>You have received a new friend request from <strong>{senderName}</strong>!</p>
+    <div style="background-color: #e3f2fd; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <p style="margin: 0;"><strong>From:</strong> {senderName}</p>
+      <p style="margin: 5px 0 0 0;"><strong>Native Language:</strong> {senderNativeLanguage}</p>
+      <p style="margin: 5px 0 0 0;"><strong>Learning Language:</strong> {senderLearningLanguage}</p>
+    </div>
+    <p>Log in to your account to accept or decline this friend request.</p>
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="{appURL}" style="background-color: #2196F3; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">View Friend Request</a>
+    </div>
+    <p>Best regards,<br>Edupeerhub</p>
+  </div>
+  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
+    <p>This is an automated message, please do not reply to this email.</p>
+  </div>
+</body>
+</html>
+`;
+
+export const UNREAD_MESSAGE_TEMPLATE = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Unread Messages</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(to right, #FF9800, #F57C00); padding: 20px; text-align: center;">
+    <h1 style="color: white; margin: 0;">Unread Messages</h1>
+  </div>
+  <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+    <p>Hello {userName},</p>
+    <p>You have <strong>{unreadCount}</strong> unread message{unreadCount > 1 ? 's' : ''} waiting for you!</p>
+    <div style="background-color: #fff3e0; padding: 15px; border-radius: 5px; margin: 20px 0;">
+      <p style="margin: 0;"><strong>Unread Messages:</strong> {unreadCount}</p>
+      <p style="margin: 5px 0 0 0;"><strong>From:</strong> {senderNames}</p>
+    </div>
+    <p>Don't miss out on important conversations. Log in to read your messages now!</p>
+    <div style="text-align: center; margin: 30px 0;">
+      <a href="{appURL}" style="background-color: #FF9800; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Read Messages</a>
+    </div>
+    <p>Best regards,<br>Edupeerhub</p>
+  </div>
+  <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
+    <p>This is an automated message, please do not reply to this email.</p>
+  </div>
+</body>
+</html>
+`;

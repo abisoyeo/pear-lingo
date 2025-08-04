@@ -8,6 +8,7 @@ import {
   updateProfile,
 } from "./user.service.js";
 import sendResponse from "../../shared/utils/sendResponse.util.js";
+import { sendFriendRequestEmail } from "../../shared/mailtrap/emails.js";
 
 export async function getRecommendedUsers(req, res, next) {
   try {
@@ -43,7 +44,16 @@ export async function sendFriendRequest(req, res, next) {
       myId: req.user.id,
       recipientId: req.params.id,
     };
-    const friendRequest = await sendRequest(userData);
+
+    const { friendRequest, emailData } = await sendRequest(userData);
+
+    /* await sendFriendRequestEmail(
+      emailData.recipientEmail,
+      emailData.recipientName,
+      emailData.senderName,
+      emailData.senderNativeLanguage,
+      emailData.senderLearningLanguage
+    ); */
 
     sendResponse(res, 201, "Friend Request Sent", friendRequest);
   } catch (error) {
