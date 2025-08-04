@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { AppleIcon } from "lucide-react";
 import { Link } from "react-router";
-import ErrorAlert from "../components/ErrorAlert";
-import useSignUp from "../hooks/useSignup";
-import { useCooldown } from "../hooks/useCooldown";
-import PasswordStrengthMeter from "../components/PasswordStrengthMeter";
-import GoogleAuthButton from "../components/GoogleAuthButton";
+import ErrorAlert from "../../components/common/ErrorAlert";
+import useSignUp from "../../hooks/useSignup";
+import { useCooldown } from "../../hooks/useCooldown";
+import PasswordStrengthMeter from "../../components/auth/PasswordStrengthMeter";
+import GoogleLoginButton from "../../components/auth/GoogleLoginButton";
 
 const SignupPage = () => {
   const [signupData, setSignupData] = useState({
@@ -183,7 +183,7 @@ const SignupPage = () => {
                   </div>
 
                   {/* Google Button */}
-                  <GoogleAuthButton text="Sign up with Google" />
+                  <GoogleLoginButton text="Sign up with Google" />
                 </div>
 
                 <div className="text-center mt-4">

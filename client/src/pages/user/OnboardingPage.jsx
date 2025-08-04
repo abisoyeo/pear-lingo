@@ -7,11 +7,11 @@ import {
   ShuffleIcon,
 } from "lucide-react";
 
-import { handleToastSuccess } from "../utils/toastDisplayHandler";
-import { LANGUAGES } from "../constants";
-import ErrorAlert from "../components/ErrorAlert";
-import useOnboarding from "../hooks/useOnboarding";
-import { useAuth } from "../context/AuthContext";
+import { handleToastSuccess } from "../../utils/toastDisplayHandler";
+import { LANGUAGES } from "../../constants";
+import ErrorAlert from "../../components/common/ErrorAlert";
+import useOnboarding from "../../hooks/useOnboarding";
+import { useAuth } from "../../context/AuthContext";
 
 const OnboardingPage = () => {
   const { authUser } = useAuth();

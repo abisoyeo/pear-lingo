@@ -174,7 +174,7 @@ export async function changeUserPassword(userId, oldPassword, newPassword) {
 
 export async function fetchProfile(userId) {
   const user = await User.findById(userId).select(
-    "fullName email profilePic bio location nativeLanguage learningLanguage isOnboarded isVerified "
+    "fullName email profilePic bio location nativeLanguage learningLanguage isOnboarded isVerified role"
   );
 
   if (!user) throw new ApiError("User not found", 404);

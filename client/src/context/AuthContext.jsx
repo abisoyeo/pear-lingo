@@ -1,6 +1,6 @@
 import { createContext, useContext } from "react";
 import useAuthUser from "../hooks/useAuthUser";
-import PageLoader from "../components/PageLoader";
+import PageLoader from "../components/common/PageLoader";
 
 const AuthContext = createContext(null);
 

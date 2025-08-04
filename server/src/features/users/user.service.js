@@ -3,8 +3,15 @@ import FriendRequest from "./friendRequest.model.js";
 import User from "./user.model.js";
 
 export async function recommendUsers(userId) {
-  const currentUser = await User.findById(userId).select("friends");
+  const currentUser = await User.findById(userId).select("friends role");
   const excludedFriendIds = currentUser?.friends || [];
+
+  // If current user is admin, only show other admins
+  // If current user is regular user, exclude all admins
+  const roleFilter =
+    currentUser?.role === "admin"
+      ? { role: "admin" }
+      : { role: { $ne: "admin" } };
 
   return await User.find({
     $and: [
@@ -12,6 +19,7 @@ export async function recommendUsers(userId) {
       { _id: { $nin: excludedFriendIds } },
       { isVerified: true },
       { isOnboarded: true },
+      roleFilter,
     ],
   });
 }
@@ -30,9 +38,19 @@ export async function sendRequest(userData) {
     throw new ApiError("You can't send friend request to yourself", 400);
   }
 
+  const currentUser = await User.findById(myId).select("role");
   const recipient = await User.findById(recipientId);
+
   if (!recipient) {
     throw new ApiError("Recipient not found", 404);
+  }
+
+  // Prevent regular users from sending requests to admins
+  if (currentUser?.role !== "admin" && recipient.role === "admin") {
+    throw new ApiError(
+      "You cannot send friend requests to administrators",
+      403
+    );
   }
 
   if (recipient.friends.includes(myId)) {

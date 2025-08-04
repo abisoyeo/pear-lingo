@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { AppleIcon } from "lucide-react";
 import { Link } from "react-router";
-import useLogin from "../hooks/useLogin";
-import { useCooldown } from "../hooks/useCooldown";
-import ErrorAlert from "../components/ErrorAlert";
-import GoogleAuthButton from "../components/GoogleAuthButton";
+import useLogin from "../../hooks/useLogin";
+import { useCooldown } from "../../hooks/useCooldown";
+import ErrorAlert from "../../components/common/ErrorAlert";
+import GoogleLoginButton from "../../components/auth/GoogleLoginButton";
 
 const LoginPage = () => {
   const [loginData, setLoginData] = useState({
@@ -146,7 +146,7 @@ const LoginPage = () => {
                       </div>
 
                       {/* Google Button */}
-                      <GoogleAuthButton text="Sign in with Google" />
+                      <GoogleLoginButton text="Sign in with Google" />
                     </div>
                     <div className="text-center mt-4">
                       <p className="text-sm">

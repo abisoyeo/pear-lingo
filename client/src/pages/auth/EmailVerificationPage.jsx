@@ -1,10 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
 import { AppleIcon } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
-import useVerifyEmail from "../hooks/useVerifyEmail";
-import { useCooldown } from "../hooks/useCooldown";
-import ErrorAlert from "../components/ErrorAlert";
-import { resendVerificationEmail } from "../lib/api";
+import useVerifyEmail from "../../hooks/useVerifyEmail";
+import { useCooldown } from "../../hooks/useCooldown";
+import ErrorAlert from "../../components/common/ErrorAlert";
+import { resendVerificationEmail } from "../../lib/api";
 
 const EmailVerificationPage = () => {
   const [verificationCode, setVerificationCode] = useState([

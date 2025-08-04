@@ -13,6 +13,7 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import helmet from "helmet";
 
+import adminRoutes from "./features/admin/admin.route.js";
 import authRoutes from "./features/auth/auth.route.js";
 import userRoutes from "./features/users/user.route.js";
 import chatRoutes from "./features/chat/chat.route.js";
@@ -47,6 +48,7 @@ app.use(passport.initialize());
 
 app.use(httpLogger);
 
+app.use("/api/admins", adminRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/chat", chatRoutes);

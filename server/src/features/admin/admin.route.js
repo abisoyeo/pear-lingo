@@ -1,3 +1,4 @@
+import express from "express";
 import { protectRoute, requireAdminRole } from "../auth/auth.middleware.js";
 import * as adminController from "./admin.controller.js";
 
@@ -5,7 +6,7 @@ const router = express.Router();
 
 router.use(protectRoute);
 router.use(requireAdminRole);
-router.post("/admins", adminController.createAdmin);
+router.post("/", adminController.createAdmin);
 router.get("/users", adminController.getUsers);
 router.put("/users/:id/role", adminController.changeRole);
 router.put("/users/:id/suspend", adminController.suspend);

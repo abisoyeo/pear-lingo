@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { AppleIcon, ArrowLeft, Loader, Mail } from "lucide-react";
 import { Link } from "react-router";
-import useForgotPassword from "../hooks/useForgotPassword";
-import { useCooldown } from "../hooks/useCooldown";
-import ErrorAlert from "../components/ErrorAlert";
+import useForgotPassword from "../../hooks/useForgotPassword";
+import { useCooldown } from "../../hooks/useCooldown";
+import ErrorAlert from "../../components/common/ErrorAlert";
 
 const ForgotPasswordPage = () => {
   const [email, setEmail] = useState("");

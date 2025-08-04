@@ -1,6 +1,6 @@
 import { Link, useLocation } from "react-router";
 import { BellIcon, HomeIcon, UsersIcon } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 const SidebarContent = () => {
   const { authUser } = useAuth();
@@ -27,7 +27,9 @@ const SidebarContent = () => {
           }`}
         >
           <UsersIcon className="size-5 text-base-content opacity-70" />
-          <span>Friends</span>
+          <span>
+            {authUser?.role === "admin" ? "Admin Friends" : "Friends"}
+          </span>
         </Link>
 
         <Link
@@ -37,8 +39,44 @@ const SidebarContent = () => {
           }`}
         >
           <BellIcon className="size-5 text-base-content opacity-70" />
-          <span>Notifications</span>
+          <span>
+            {authUser?.role === "admin" ? "Admin Alerts" : "Notifications"}
+          </span>
         </Link>
+
+        {authUser?.role === "admin" && (
+          <>
+            <Link
+              to="/admin"
+              className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case ${
+                currentPath === "/admin" ? "btn-active" : ""
+              }`}
+            >
+              <UsersIcon className="size-5 text-base-content opacity-70" />
+              <span>Admin</span>
+            </Link>
+
+            <Link
+              to="/admin/users"
+              className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case ${
+                currentPath === "/admin/users" ? "btn-active" : ""
+              }`}
+            >
+              <UsersIcon className="size-5 text-base-content opacity-70" />
+              <span>Users</span>
+            </Link>
+
+            <Link
+              to="/admin/create-admin"
+              className={`btn btn-ghost justify-start w-full gap-3 px-3 normal-case ${
+                currentPath === "/admin/create-admin" ? "btn-active" : ""
+              }`}
+            >
+              <UsersIcon className="size-5 text-base-content opacity-70" />
+              <span>Create Admin</span>
+            </Link>
+          </>
+        )}
       </nav>
 
       <div className="p-4 border-t border-base-300 mt-auto">

@@ -2,9 +2,9 @@ import { useState } from "react";
 import { useParams } from "react-router";
 import { AppleIcon, Lock } from "lucide-react";
 import toast from "react-hot-toast";
-import useResetPassword from "../hooks/useResetPassword";
-import { useCooldown } from "../hooks/useCooldown";
-import ErrorAlert from "../components/ErrorAlert";
+import useResetPassword from "../../hooks/useResetPassword";
+import { useCooldown } from "../../hooks/useCooldown";
+import ErrorAlert from "../../components/common/ErrorAlert";
 
 const ResetPasswordPage = () => {
   const [password, setPassword] = useState("");

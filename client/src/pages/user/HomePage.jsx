@@ -5,7 +5,7 @@ import {
   getRecommendedUsers,
   getUserFriends,
   sendFriendRequest,
-} from "../lib/api";
+} from "../../lib/api";
 import { Link } from "react-router";
 import {
   CheckCircleIcon,
@@ -14,9 +14,9 @@ import {
   UsersIcon,
 } from "lucide-react";
 
-import { capitialize } from "../lib/utils";
-import FriendCard, { getLanguageFlag } from "../components/FriendCard";
-import NoFriendsFound from "../components/NoFriendsFound";
+import { capitialize } from "../../lib/utils";
+import FriendCard, { getLanguageFlag } from "../../components/ui/FriendCard";
+import NoFriendsFound from "../../components/ui/NoFriendsFound";
 
 const HomePage = () => {
   const queryClient = useQueryClient();

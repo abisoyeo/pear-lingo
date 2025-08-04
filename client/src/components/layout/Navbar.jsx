@@ -1,8 +1,8 @@
 import { MenuIcon, LogOutIcon, BellIcon, AppleIcon } from "lucide-react";
 import { Link } from "react-router";
-import useLogout from "../hooks/useLogout";
+import useLogout from "../../hooks/useLogout";
 import ThemeSelector from "./ThemeSelector";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 
 const Navbar = ({ onOpenDrawer }) => {
   const { authUser } = useAuth();

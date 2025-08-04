@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
-import { getStreamToken } from "../lib/api";
+import { getStreamToken } from "../../lib/api";
 
 import {
   Channel,
@@ -15,10 +15,10 @@ import {
 import { StreamChat } from "stream-chat";
 import toast from "react-hot-toast";
 
-import ChatLoader from "../components/ChatLoader";
-import CallButton from "../components/CallButton";
-import { handleToastSuccess } from "../utils/toastDisplayHandler";
-import { useAuth } from "../context/AuthContext";
+import ChatLoader from "../../components/ui/ChatLoader";
+import CallButton from "../../components/ui/CallButton";
+import { handleToastSuccess } from "../../utils/toastDisplayHandler";
+import { useAuth } from "../../context/AuthContext";
 
 const STREAM_API_KEY = import.meta.env.VITE_STREAM_API_KEY;
 

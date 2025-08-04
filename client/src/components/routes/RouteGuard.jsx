@@ -13,6 +13,7 @@ import { useAuth } from "../../context/AuthContext";
  */
 const RouteGuard = ({
   requireAuth = false,
+  requireAdminRole = false,
   requireVerified,
   requireOnboarded,
   publicOnly = false,
@@ -28,28 +29,26 @@ const RouteGuard = ({
   }
 
   // Require authentication
-  if (requireAuth && !authUser) {
-    return <Navigate to="/login" replace />;
-  }
+  if (requireAuth && !authUser) return <Navigate to="/login" replace />;
 
   if (authUser) {
+    if (requireAdminRole && authUser.role !== "admin")
+      return <Navigate to="/" replace />;
+
     // Priority: unverified check
-    if (requireVerified !== false && !authUser.isVerified) {
+    if (requireVerified !== false && !authUser.isVerified)
       return <Navigate to="/verify-email" replace />;
-    }
 
     // Onboarding checks
-    if (requireOnboarded === true && !authUser.isOnboarded) {
+    if (requireOnboarded === true && !authUser.isOnboarded)
       return <Navigate to="/onboarding" replace />;
-    }
-    if (requireOnboarded === false && authUser.isOnboarded) {
+
+    if (requireOnboarded === false && authUser.isOnboarded)
       return <Navigate to="/" replace />;
-    }
 
     // If must be unverified but user is verified
-    if (requireVerified === false && authUser.isVerified) {
+    if (requireVerified === false && authUser.isVerified)
       return <Navigate to="/" replace />;
-    }
   }
 
   return children;
