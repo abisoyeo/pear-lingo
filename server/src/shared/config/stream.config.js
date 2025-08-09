@@ -12,14 +12,7 @@ const streamClient = StreamChat.getInstance(apiKey, apiSecret);
 
 export const upsertStreamUser = async (user) => {
   try {
-    await streamClient.upsertUsers([
-      {
-        id: user.id.toString(),
-        name: user.fullName,
-        image: user.profilePic,
-        email: user.email,
-      },
-    ]);
+    await streamClient.upsertUsers([user]);
     return user;
   } catch (error) {
     throw new ApiError("Failed to sync user with Stream", 502, {

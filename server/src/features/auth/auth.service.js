@@ -205,10 +205,11 @@ export async function onBoardUser(userData) {
   return updatedUser;
 }
 
-export async function addStreamUser({ id, fullName, profilePic }) {
+export async function addStreamUser({ id, fullName, profilePic, email }) {
   await upsertStreamUser({
     id: id.toString(),
     name: fullName,
     image: profilePic || "",
+    email: email,
   });
 }
