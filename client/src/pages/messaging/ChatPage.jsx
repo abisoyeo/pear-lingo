@@ -91,7 +91,7 @@ const ChatPage = () => {
   if (isLoading || !chatClient || !channel) return <ChatLoader />;
 
   return (
-    <div className="h-[93vh]">
+    <div className="h-screen w-full flex flex-col p-4">
       <Chat client={chatClient}>
         <Channel channel={channel}>
           <div className="w-full relative">
