@@ -1,4 +1,4 @@
-import rateLimit, { ipKeyGenerator } from "express-rate-limit";
+import rateLimit from "express-rate-limit";
 import ApiError from "../utils/apiError.util.js";
 import logger from "../utils/logger.js";
 
@@ -13,10 +13,6 @@ export default function createRateLimiter({ max, windowMs, message }) {
   return rateLimit({
     windowMs,
     max,
-    keyGenerator: (req) => {
-      // Use email from body if available, fallback to IP
-      return req.body?.email || ipKeyGenerator(req);
-    },
     handler: (req, res, next) => {
       logger.warn("Rate limit hit", {
         ip: req.ip,
