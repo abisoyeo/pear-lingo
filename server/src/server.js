@@ -35,7 +35,7 @@ app.use(
   })
 );
 
-// app.use(helmet());
+app.use(helmet());
 app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
@@ -63,17 +63,6 @@ app.get("/api/health", (req, res) => {
 app.use("/api/*", (req, res, next) => {
   next(new ApiError(404, `Cannot ${req.method} ${req.originalUrl}`));
 });
-
-if (process.env.NODE_ENV === "production") {
-  const distPath = path.resolve(__dirname, "../../client/dist");
-  const indexPath = path.resolve(__dirname, "../../client/dist/index.html");
-
-  app.use(express.static(distPath));
-
-  app.use("*", (req, res) => {
-    res.sendFile(indexPath);
-  });
-}
 
 // app.use(Sentry.Handlers.errorHandler());
 app.use(errorHandler);
