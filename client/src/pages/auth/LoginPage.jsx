@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { ShipWheelIcon } from "lucide-react";
+import { AppleIcon } from "lucide-react";
 import { Link } from "react-router";
-import useLogin from "../hooks/useLogin";
-import ErrorAlert from "../components/ErrorAlert";
+import useLogin from "../../hooks/useLogin";
+import { useCooldown } from "../../hooks/useCooldown";
+import ErrorAlert from "../../components/common/ErrorAlert";
+import GoogleLoginButton from "../../components/auth/GoogleLoginButton";
 
 const LoginPage = () => {
   const [loginData, setLoginData] = useState({
@@ -10,36 +12,46 @@ const LoginPage = () => {
     password: "",
   });
 
-  const { isPending, error, loginMutation } = useLogin();
+  const {
+    isPending,
+    error,
+    loginMutation,
+    fieldErrors,
+    generalError,
+    clearErrors,
+    retryAfter,
+    setRetryAfter,
+  } = useLogin();
+
+  const { cooldown, isActive, formatTime } = useCooldown(retryAfter);
 
   const handleLogin = (e) => {
     e.preventDefault();
+
+    if (isActive) return;
+
+    clearErrors();
+    setRetryAfter(null);
     loginMutation(loginData);
   };
 
   return (
     <>
-      <div
-        className="h-screen flex items-center justify-center p-4 sm:p-6 md:p-8"
-        data-theme="winter"
-      >
+      <div className="h-screen flex items-center justify-center p-4 sm:p-6 md:p-8">
         <div className="border border-primary/25 flex flex-col lg:flex-row w-full max-w-5xl mx-auto bg-base-100 rounded-xl shadow-lg overflow-hidden">
           {/* LOGIN FORM SECTION */}
           <div className="w-full lg:w-1/2 p-4 sm:p-8 flex flex-col">
             {/* LOGO */}
             <div className="mb-4 flex items-center justify-start gap-2">
-              <ShipWheelIcon className="size-9 text-primary" />
+              <AppleIcon className="size-9 text-primary" />
               <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary  tracking-wider">
-                Pear Stream
+                Pear Lingo
               </span>
             </div>
 
-            {/* ERROR MESSAGE DISPLAY */}
-            {error && (
-              <div className="alert alert-error mb-4">
-                <ErrorAlert error={error} />
-              </div>
-            )}
+            {/* GENERAL ERROR MESSAGE IF ANY */}
+            <ErrorAlert message={generalError} />
+
             <div className="w-full">
               <form onSubmit={handleLogin}>
                 <div className="space-y-4">
@@ -65,6 +77,11 @@ const LoginPage = () => {
                         }
                         required
                       />
+                      {fieldErrors.email && (
+                        <span className="text-error text-xs mt-1">
+                          {fieldErrors.email}
+                        </span>
+                      )}
                     </div>
 
                     <div className="form-control w-full space-y-2">
@@ -84,23 +101,53 @@ const LoginPage = () => {
                         }
                         required
                       />
+                      {fieldErrors.password && (
+                        <span className="text-error text-xs mt-1">
+                          {fieldErrors.password}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex items-center mb-4">
+                      <Link
+                        to="/forgot-password"
+                        className="text-sm text-primary hover:underline"
+                      >
+                        Forgot password?
+                      </Link>
                     </div>
 
-                    <button
-                      type="submit"
-                      className="btn btn-primary w-full"
-                      disabled={isPending}
-                    >
-                      {isPending ? (
-                        <>
-                          <span className="loading loading-spinner loading-xs"></span>
-                          Signing in...
-                        </>
-                      ) : (
-                        "Sign In"
-                      )}
-                    </button>
+                    <div className="space-y-2">
+                      {/* SIGN IN BUTTON */}
+                      <button
+                        type="submit"
+                        className="w-full rounded-full bg-primary text-white text-sm font-medium px-4 hover:bg-primary/90 transition"
+                        style={{
+                          fontFamily: "Roboto, sans-serif",
+                          height: "40px",
+                        }}
+                        disabled={isPending || isActive}
+                      >
+                        {isPending ? (
+                          <>
+                            <span className="loading loading-spinner loading-xs"></span>
+                            Signing in...
+                          </>
+                        ) : isActive ? (
+                          `Wait ${formatTime} to retry`
+                        ) : (
+                          "Sign In"
+                        )}
+                      </button>
+                      {/* Divider */}
+                      <div className="flex items-center gap-2">
+                        <hr className="flex-grow border-gray-300" />
+                        <span className="text-gray-500 text-xs">OR</span>
+                        <hr className="flex-grow border-gray-300" />
+                      </div>
 
+                      {/* Google Button */}
+                      <GoogleLoginButton text="Sign in with Google" />
+                    </div>
                     <div className="text-center mt-4">
                       <p className="text-sm">
                         Don't have an account?{" "}

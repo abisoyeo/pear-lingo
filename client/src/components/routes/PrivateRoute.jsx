@@ -1,14 +1,14 @@
-import { Navigate } from "react-router";
-import useAuthUser from "../../hooks/useAuthUser";
-import PageLoader from "../PageLoader";
+import RouteGuard from "./RouteGuard";
 
-const PrivateRoute = ({ children }) => {
-  const { isLoading, authUser } = useAuthUser();
-
-  if (isLoading) return <PageLoader />;
-  if (!authUser || !authUser.isOnboarded) return <Navigate to="/login" />;
-
-  return children;
-};
-
-export default PrivateRoute;
+/**
+ * PrivateRoute component that wraps children with RouteGuard
+ * requiring authentication, email verification, and onboarding.
+ *
+ * @param {Object} props
+ * @param {ReactNode} props.children - The child components to render
+ */
+export default ({ children }) => (
+  <RouteGuard requireAuth requireVerified requireOnboarded={true}>
+    {children}
+  </RouteGuard>
+);

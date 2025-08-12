@@ -5,14 +5,16 @@ import {
   processFriendRequest,
   recommendUsers,
   sendRequest,
+  updateProfile,
 } from "./user.service.js";
 import sendResponse from "../../shared/utils/sendResponse.util.js";
+import { sendFriendRequestEmail } from "../../shared/mailtrap/emails.js";
 
 export async function getRecommendedUsers(req, res, next) {
   try {
-    const userData = { currentUserId: req.user.id, currentUser: req.user };
+    const userId = req.user.id;
 
-    const recommendedUsers = await recommendUsers(userData);
+    const recommendedUsers = await recommendUsers(userId);
 
     sendResponse(
       res,
@@ -42,7 +44,16 @@ export async function sendFriendRequest(req, res, next) {
       myId: req.user.id,
       recipientId: req.params.id,
     };
-    const friendRequest = await sendRequest(userData);
+
+    const { friendRequest, emailData } = await sendRequest(userData);
+
+    /* await sendFriendRequestEmail(
+      emailData.recipientEmail,
+      emailData.recipientName,
+      emailData.senderName,
+      emailData.senderNativeLanguage,
+      emailData.senderLearningLanguage
+    ); */
 
     sendResponse(res, 201, "Friend Request Sent", friendRequest);
   } catch (error) {
@@ -90,6 +101,15 @@ export async function getOutgoingFriendRequests(req, res, next) {
       "Outgoing friend requests fetched successfully",
       myOutgoingRequests
     );
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function updateUserProfile(req, res, next) {
+  try {
+    const updatedUser = await updateProfile(req.user.id, req.body);
+    sendResponse(res, 200, "Profile updated successfully", updatedUser);
   } catch (error) {
     next(error);
   }

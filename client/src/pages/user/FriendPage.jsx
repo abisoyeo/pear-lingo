@@ -1,9 +1,9 @@
 import { UsersIcon } from "lucide-react";
 import { Link } from "react-router";
-import NoFriendsFound from "../components/NoFriendsFound";
-import FriendCard from "../components/FriendCard";
+import NoFriendsFound from "../../components/ui/NoFriendsFound";
+import FriendCard from "../../components/ui/FriendCard";
 import { useQuery } from "@tanstack/react-query";
-import { getUserFriends } from "../lib/api";
+import { getUserFriends } from "../../lib/api";
 
 const FriendPage = () => {
   const { data: friends = [], isLoading: isLoadingFriends } = useQuery({

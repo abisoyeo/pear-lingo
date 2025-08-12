@@ -13,7 +13,7 @@ export default function userAuthPlugin(schema) {
   });
 
   schema.methods.generateAuthToken = function () {
-    return jwt.sign({ id: this._id }, process.env.JWT_SECRET, {
+    return jwt.sign({ id: this._id, role: this.role }, process.env.JWT_SECRET, {
       expiresIn: "7d",
     });
   };

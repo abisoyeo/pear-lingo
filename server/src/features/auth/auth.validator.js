@@ -30,6 +30,42 @@ export const authValidation = {
     }),
   }),
 
+  forgotPassword: Joi.object({
+    email: Joi.string().email().required().messages({
+      "string.email": "Email must be a valid email address",
+      "string.empty": "Email cannot be empty",
+      "any.required": "Email is required",
+    }),
+  }),
+
+  changePassword: Joi.object({
+    currentPassword: Joi.string().min(6).required().messages({
+      "string.empty": "Password cannot be empty",
+      "string.min": "Password must be at least 6 characters",
+      "any.required": "Password is required",
+    }),
+    newPassword: Joi.string().min(6).required().messages({
+      "string.empty": "New Password cannot be empty",
+      "string.min": "New Password must be at least 6 characters",
+      "any.required": "New Password is required",
+    }),
+  }),
+
+  resetPassword: Joi.object({
+    password: Joi.string().min(6).required().messages({
+      "string.empty": "Password cannot be empty",
+      "string.min": "Password must be at least 6 characters",
+      "any.required": "Password is required",
+    }),
+  }),
+
+  verifyEmail: Joi.object({
+    code: Joi.string().trim().length(6).required().messages({
+      "string.empty": "Verification code cannot be empty",
+      "string.length": "Verification code must be 6 characters",
+      "any.required": "Verification code is required",
+    }),
+  }),
   onboarding: Joi.object({
     fullName: Joi.string().trim().min(1).required().messages({
       "string.empty": "Full Name cannot be empty",

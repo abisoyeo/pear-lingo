@@ -116,7 +116,6 @@ process.on("unhandledRejection", (reason) => {
   logger.error(
     "Unhandled Rejection",
     reason instanceof Error ? reason : { message: String(reason) }
-
   );
 });
 

@@ -1,16 +1,15 @@
-import { Navigate } from "react-router";
-import useAuthUser from "../../hooks/useAuthUser";
-import PageLoader from "../PageLoader";
+import RouteGuard from "./RouteGuard";
 
-const OnboardingRoute = ({ children }) => {
-  const { isLoading, authUser } = useAuthUser();
-
-  if (isLoading) return <PageLoader />;
-
-  if (!authUser) return <Navigate to="/login" />;
-  if (authUser.isOnboarded) return <Navigate to="/" />;
-
-  return children;
-};
-
-export default OnboardingRoute;
+/**
+ * OnboardingRoute component that wraps children with RouteGuard
+ * to ensure they are only accessible when the user is authenticated,
+ * verified, but NOT onboarded
+ * @param {Object} props
+ * @param {ReactNode} props.children - The child components to render
+ * * @returns {JSX.Element} - The wrapped children with RouteGuard
+ */
+export default ({ children }) => (
+  <RouteGuard requireAuth requireVerified requireOnboarded={false}>
+    {children}
+  </RouteGuard>
+);

@@ -1,8 +1,11 @@
 import { useState } from "react";
-import { ShipWheelIcon } from "lucide-react";
+import { AppleIcon } from "lucide-react";
 import { Link } from "react-router";
-import ErrorAlert from "../components/ErrorAlert";
-import useSignUp from "../hooks/useSignup";
+import ErrorAlert from "../../components/common/ErrorAlert";
+import useSignUp from "../../hooks/useSignup";
+import { useCooldown } from "../../hooks/useCooldown";
+import PasswordStrengthMeter from "../../components/auth/PasswordStrengthMeter";
+import GoogleLoginButton from "../../components/auth/GoogleLoginButton";
 
 const SignupPage = () => {
   const [signupData, setSignupData] = useState({
@@ -11,46 +14,55 @@ const SignupPage = () => {
     password: "",
   });
 
-  const { isPending, error, signupMutation } = useSignUp();
+  const {
+    isPending,
+    signupMutation,
+    fieldErrors,
+    generalError,
+    clearErrors,
+    retryAfter,
+    setRetryAfter,
+  } = useSignUp();
+
+  const { cooldown, isActive, formatTime } = useCooldown(retryAfter);
 
   const handleSignup = (e) => {
     e.preventDefault();
+
+    if (isActive) return;
+
+    clearErrors();
+    setRetryAfter(null);
     signupMutation(signupData);
   };
 
   return (
-    <div
-      className="h-screen flex items-center justify-center p-4 sm:p-6 md:p-8"
-      data-theme="winter"
-    >
-      <div className="border border-primary/25 flex flex-col lg:flex-row w-full max-w-5xl mx-auto bg-base-100 rounded-xl shadow-lg overflow-hidden">
+    <div className="min-h-screen  flex items-center justify-center p-4 sm:p-6 md:p-8 lg:py-6">
+      <div className="min-h-[300px] border border-primary/25 flex flex-col lg:flex-row w-full max-w-5xl mx-auto bg-base-100 rounded-xl shadow-lg overflow-hidden">
         {/* SIGNUP FORM - LEFT SIDE */}
-        <div className="w-full lg:w-1/2 p-4 sm:p-8 flex flex-col">
+        <div className="w-full lg:w-1/2 p-4 flex flex-col">
           {/* LOGO */}
-          <div className="mb-4 flex items-center justify-start gap-2">
-            <ShipWheelIcon className="size-9 text-primary" />
+          <div className="mb-2 flex items-center justify-start gap-2">
+            <AppleIcon className="size-9 text-primary" />
             <span className="text-3xl font-bold font-mono bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary tracking-wider">
-              Pear Stream
+              Pear Lingo
             </span>
           </div>
-          {/* ERROR MESSAGE IF ANY */}
-          {error && (
-            <div className="alert alert-error mb-4">
-              <ErrorAlert error={error} />
-            </div>
-          )}
+
+          {/* GENERAL ERROR MESSAGE IF ANY */}
+          <ErrorAlert message={generalError} />
 
           <div className="w-full">
             <form onSubmit={handleSignup}>
-              <div className="space-y-4">
+              <div className="space-y-2">
                 <div>
                   <h2 className="text-xl font-semibold">Create an Account</h2>
-                  <p className="text-sm opacity-70">
-                    Join Pear Stream and start your language learning adventure!
+                  <p className="text-sm font-semibold opacity-60">
+                    Join Pear Lingo and start your language learning adventure!
                   </p>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-2">
                   {/* FULLNAME */}
                   <div className="form-control w-full">
                     <label className="label">
@@ -69,6 +81,11 @@ const SignupPage = () => {
                       }
                       required
                     />
+                    {fieldErrors.fullName && (
+                      <span className="text-error text-xs mt-1">
+                        {fieldErrors.fullName}
+                      </span>
+                    )}
                   </div>
                   {/* EMAIL */}
                   <div className="form-control w-full">
@@ -78,13 +95,18 @@ const SignupPage = () => {
                     <input
                       type="email"
                       placeholder="john@gmail.com"
-                      className="input input-bordered w-full"
+                      className="input input-bordered w-full "
                       value={signupData.email}
                       onChange={(e) =>
                         setSignupData({ ...signupData, email: e.target.value })
                       }
                       required
                     />
+                    {fieldErrors.email && (
+                      <span className="text-error text-xs mt-1">
+                        {fieldErrors.email}
+                      </span>
+                    )}
                   </div>
                   {/* PASSWORD */}
                   <div className="form-control w-full">
@@ -94,7 +116,7 @@ const SignupPage = () => {
                     <input
                       type="password"
                       placeholder="********"
-                      className="input input-bordered w-full"
+                      className="input input-bordered w-full "
                       value={signupData.password}
                       onChange={(e) =>
                         setSignupData({
@@ -104,16 +126,19 @@ const SignupPage = () => {
                       }
                       required
                     />
-                    <p className="text-xs opacity-70 mt-1">
-                      Password must be at least 6 characters long
-                    </p>
+                    {fieldErrors.password && (
+                      <span className="text-error text-xs mt-1">
+                        {fieldErrors.password}
+                      </span>
+                    )}
+                    <PasswordStrengthMeter password={signupData.password} />
                   </div>
 
                   <div className="form-control">
                     <label className="label cursor-pointer justify-start gap-2">
                       <input
                         type="checkbox"
-                        className="checkbox checkbox-sm"
+                        className="checkbox checkbox-xs"
                         required
                       />
                       <span className="text-xs leading-tight">
@@ -130,16 +155,36 @@ const SignupPage = () => {
                   </div>
                 </div>
 
-                <button className="btn btn-primary w-full" type="submit">
-                  {isPending ? (
-                    <>
-                      <span className="loading loading-spinner loading-xs"></span>
-                      Loading...
-                    </>
-                  ) : (
-                    "Create Account"
-                  )}{" "}
-                </button>
+                <div className="space-y-2">
+                  {/* Create Account button */}
+                  <button
+                    type="submit"
+                    className="w-full rounded-full bg-primary text-white text-sm font-medium px-4 hover:bg-primary/90 transition"
+                    style={{ fontFamily: "Roboto, sans-serif", height: "40px" }}
+                    disabled={isPending || isActive}
+                  >
+                    {isPending ? (
+                      <>
+                        <span className="loading loading-spinner loading-xs"></span>
+                        Loading...
+                      </>
+                    ) : isActive ? (
+                      `Wait ${formatTime} to retry`
+                    ) : (
+                      "Create Account"
+                    )}
+                  </button>
+
+                  {/* Divider */}
+                  <div className="flex items-center gap-2">
+                    <hr className="flex-grow border-gray-300" />
+                    <span className="text-gray-500 text-xs">OR</span>
+                    <hr className="flex-grow border-gray-300" />
+                  </div>
+
+                  {/* Google Button */}
+                  <GoogleLoginButton text="Sign up with Google" />
+                </div>
 
                 <div className="text-center mt-4">
                   <p className="text-sm">
@@ -165,7 +210,7 @@ const SignupPage = () => {
               />
             </div>
 
-            <div className="text-center space-y-3 mt-6">
+            <div className="text-center space-y-2 mt-6">
               <h2 className="text-xl font-semibold">
                 Connect with language partners worldwide
               </h2>

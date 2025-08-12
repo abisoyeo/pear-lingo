@@ -5,7 +5,7 @@ import {
   getRecommendedUsers,
   getUserFriends,
   sendFriendRequest,
-} from "../lib/api";
+} from "../../lib/api";
 import { Link } from "react-router";
 import {
   CheckCircleIcon,
@@ -14,9 +14,9 @@ import {
   UsersIcon,
 } from "lucide-react";
 
-import { capitialize } from "../lib/utils";
-import FriendCard, { getLanguageFlag } from "../components/FriendCard";
-import NoFriendsFound from "../components/NoFriendsFound";
+import { capitialize } from "../../lib/utils";
+import FriendCard, { getLanguageFlag } from "../../components/ui/FriendCard";
+import NoFriendsFound from "../../components/ui/NoFriendsFound";
 
 const HomePage = () => {
   const queryClient = useQueryClient();
@@ -49,7 +49,7 @@ const HomePage = () => {
     const outgoingIds = new Set();
     if (outgoingFriendReqs && outgoingFriendReqs.length > 0) {
       outgoingFriendReqs.forEach((req) => {
-        outgoingIds.add(req.recipient.id);
+        outgoingIds.add(req.recipient?.id);
       });
       setOutgoingRequestsIds(outgoingIds);
     }
@@ -128,7 +128,7 @@ const HomePage = () => {
                       {/* User Avatar & Info */}
                       <div className="flex items-center gap-3">
                         <div className="avatar size-16 rounded-full">
-                          <img src={user.profilePic} alt={user.fullName} />
+                          <img src={user?.profilePic} alt={user.fullName} />
                         </div>
 
                         <div>
