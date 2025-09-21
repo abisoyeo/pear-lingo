@@ -33,7 +33,7 @@ export async function googleAuth(req, res, next) {
     res.cookie("jwt", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
     // await sendWelcomeEmail(user.email, user.fullName);
     res.redirect(process.env.CLIENT_URL);
