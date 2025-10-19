@@ -176,7 +176,7 @@ export const UNREAD_MESSAGE_TEMPLATE = `
   </div>
   <div style="background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
     <p>Hello {userName},</p>
-    <p>You have <strong>{unreadCount}</strong> unread message{unreadCount > 1 ? 's' : ''} waiting for you!</p>
+    <p>You have <strong>{unreadCount}</strong> unread message{plural} waiting for you!</p>
     <div style="background-color: #fff3e0; padding: 15px; border-radius: 5px; margin: 20px 0;">
       <p style="margin: 0;"><strong>Unread Messages:</strong> {unreadCount}</p>
       <p style="margin: 5px 0 0 0;"><strong>From:</strong> {senderNames}</p>

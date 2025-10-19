@@ -157,17 +157,20 @@ export const sendUnreadMessageEmail = async (
   const recipient = [{ email: userEmail }];
   const appURL = process.env.CLIENT_URL || "http://localhost:5173";
 
+  const plural = unreadCount > 1 ? "s" : "";
+
+  const html = UNREAD_MESSAGE_TEMPLATE.replace(/{userName}/g, userName)
+    .replace(/{unreadCount}/g, unreadCount)
+    .replace(/{senderNames}/g, senderNames)
+    .replace(/{plural}/g, plural)
+    .replace(/{appURL}/g, appURL);
+
   try {
     await mailtrapClient.send({
       from: sender,
       to: recipient,
-      subject: `You have ${unreadCount} unread message${
-        unreadCount > 1 ? "s" : ""
-      }`,
-      html: UNREAD_MESSAGE_TEMPLATE.replace("{userName}", userName)
-        .replace("{unreadCount}", unreadCount)
-        .replace("{senderNames}", senderNames)
-        .replace("{appURL}", appURL),
+      subject: `You have ${unreadCount} unread message${plural}`,
+      html,
       category: "Unread Messages",
     });
   } catch (error) {
