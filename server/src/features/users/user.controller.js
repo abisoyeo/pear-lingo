@@ -47,13 +47,13 @@ export async function sendFriendRequest(req, res, next) {
 
     const { friendRequest, emailData } = await sendRequest(userData);
 
-    /* await sendFriendRequestEmail(
+    await sendFriendRequestEmail(
       emailData.recipientEmail,
       emailData.recipientName,
       emailData.senderName,
       emailData.senderNativeLanguage,
       emailData.senderLearningLanguage
-    ); */
+    );
 
     sendResponse(res, 201, "Friend Request Sent", friendRequest);
   } catch (error) {
