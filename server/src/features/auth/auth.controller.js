@@ -35,7 +35,11 @@ export async function googleAuth(req, res, next) {
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
-    await sendWelcomeEmail(user.email, user.fullName);
+
+    if (user.isNewUser) {
+      await sendWelcomeEmail(user.email, user.fullName);
+    }
+
     res.redirect(process.env.CLIENT_URL);
   } catch (error) {
     next(error);

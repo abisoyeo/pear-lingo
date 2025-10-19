@@ -22,6 +22,8 @@ passport.use(
           ],
         });
 
+        let isNewUser = false;
+
         if (user) {
           if (!user.providerId) {
             user.providerId = profile.id;
@@ -37,7 +39,11 @@ passport.use(
             profilePic,
             isVerified: true,
           });
+          isNewUser = true;
         }
+        user = user.toObject();
+        user.isNewUser = isNewUser;
+
         return done(null, user);
       } catch (err) {
         return done(err, null);
