@@ -119,22 +119,24 @@ export const sendFriendRequestEmail = async (
   const recipient = [{ email: recipientEmail }];
   const appURL = process.env.CLIENT_URL || "http://localhost:5173";
 
+  const html = FRIEND_REQUEST_TEMPLATE.replace(
+    /{recipientName}/g,
+    recipientName
+  )
+    .replace(/{senderName}/g, senderName)
+    .replace(/{senderNativeLanguage}/g, senderNativeLanguage || "Not specified")
+    .replace(
+      /{senderLearningLanguage}/g,
+      senderLearningLanguage || "Not specified"
+    )
+    .replace(/{appURL}/g, appURL);
+
   try {
     await mailtrapClient.send({
       from: sender,
       to: recipient,
       subject: `New Friend Request from ${senderName}`,
-      html: FRIEND_REQUEST_TEMPLATE.replace("{recipientName}", recipientName)
-        .replace("{senderName}", senderName)
-        .replace(
-          "{senderNativeLanguage}",
-          senderNativeLanguage || "Not specified"
-        )
-        .replace(
-          "{senderLearningLanguage}",
-          senderLearningLanguage || "Not specified"
-        )
-        .replace("{appURL}", appURL),
+      html,
       category: "Friend Request",
     });
   } catch (error) {
