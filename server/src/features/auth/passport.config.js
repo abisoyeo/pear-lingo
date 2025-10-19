@@ -41,7 +41,7 @@ passport.use(
           });
           isNewUser = true;
         }
-        user = user.toObject();
+
         user.isNewUser = isNewUser;
 
         return done(null, user);
