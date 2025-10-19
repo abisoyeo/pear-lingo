@@ -19,7 +19,7 @@ export const VERIFICATION_EMAIL_TEMPLATE = `
     <p>Enter this code on the verification page to complete your registration.</p>
     <p>This code will expire in 1 hour for security reasons.</p>
     <p>If you didn't create an account with us, please ignore this email.</p>
-    <p>Best regards,<br>Edupeerhub</p>
+    <p>Best regards,<br>Pear Lingo</p>
   </div>
   <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
     <p>This is an automated message, please do not reply to this email.</p>
@@ -55,7 +55,7 @@ export const PASSWORD_RESET_SUCCESS_TEMPLATE = `
       <li>Avoid using the same password across multiple sites</li>
     </ul>
     <p>Thank you for helping us keep your account secure.</p>
-    <p>Best regards,<br>Edupeerhub</p>
+    <p>Best regards,<br>Pear Lingo</p>
   </div>
   <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
     <p>This is an automated message, please do not reply to this email.</p>
@@ -91,7 +91,7 @@ export const PASSWORD_CHANGE_SUCCESS_TEMPLATE = `
       <li>Avoid using the same password across multiple sites</li>
     </ul>
     <p>Thank you for helping us keep your account secure.</p>
-    <p>Best regards,<br>Edupeerhub</p>
+    <p>Best regards,<br>Pear Lingo</p>
   </div>
   <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
     <p>This is an automated message, please do not reply to this email.</p>
@@ -120,7 +120,7 @@ export const PASSWORD_RESET_REQUEST_TEMPLATE = `
       <a href="{resetURL}" style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Reset Password</a>
     </div>
     <p>This link will expire in 1 hour for security reasons.</p>
-    <p>Best regards,<br>Edupeerhub</p>
+    <p>Best regards,<br>Pear Lingo</p>
   </div>
   <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
     <p>This is an automated message, please do not reply to this email.</p>
@@ -153,7 +153,7 @@ export const FRIEND_REQUEST_TEMPLATE = `
     <div style="text-align: center; margin: 30px 0;">
       <a href="{appURL}" style="background-color: #2196F3; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">View Friend Request</a>
     </div>
-    <p>Best regards,<br>Edupeerhub</p>
+    <p>Best regards,<br>Pear Lingo</p>
   </div>
   <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
     <p>This is an automated message, please do not reply to this email.</p>
@@ -185,7 +185,7 @@ export const UNREAD_MESSAGE_TEMPLATE = `
     <div style="text-align: center; margin: 30px 0;">
       <a href="{appURL}" style="background-color: #FF9800; color: white; padding: 12px 20px; text-decoration: none; border-radius: 5px; font-weight: bold;">Read Messages</a>
     </div>
-    <p>Best regards,<br>Edupeerhub</p>
+    <p>Best regards,<br>Pear Lingo</p>
   </div>
   <div style="text-align: center; margin-top: 20px; color: #888; font-size: 0.8em;">
     <p>This is an automated message, please do not reply to this email.</p>
