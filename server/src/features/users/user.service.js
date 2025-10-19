@@ -43,7 +43,10 @@ export async function sendRequest(userData) {
     throw new ApiError("You can't send friend request to yourself", 400);
   }
 
-  const currentUser = await User.findById(myId).select("role");
+  const currentUser = await User.findById(myId).select(
+    "fullName email role nativeLanguage learningLanguage profilePic"
+  );
+
   const recipient = await User.findById(recipientId);
 
   if (!recipient) {
